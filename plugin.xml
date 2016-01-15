@@ -13,9 +13,9 @@
         </config-file>
         <config-file parent="/*" target="AndroidManifest.xml"></config-file>
 
-        <lib-file src="/lib/com.broadcom.bt.jar"/>
-        <lib-file src="/lib/commons-codec-1.8.jar"/>
-        <lib-file src="/lib/samsung_ble_sdk_200.jar"/>
+        <lib-file src="libs/com.broadcom.bt.jar"/>
+        <lib-file src="libs/commons-codec-1.8.jar"/>
+        <lib-file src="libs/samsung_ble_sdk_200.jar"/>
         <source-file src="src/android/heytzBle.java" target-dir="src/com/heytz/ble/heytzBle"/>
     </platform>
 </plugin>

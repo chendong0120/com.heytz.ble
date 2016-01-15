@@ -1,26 +1,52 @@
 package com.heytz.ble;
 
+import android.app.Application;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
+import android.content.*;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
 import com.heytz.ble.sdk.BleService;
 import com.heytz.ble.sdk.IBle;
 import org.apache.cordova.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-
 /**
  * This class echoes a string called from JavaScript.
  */
-public class heytzBle extends CordovaPlugin {
+public class HeytzBle extends CordovaPlugin {
 
+    private static final long SCAN_PERIOD = 10000;
+
+    private static final String TAG = "HeytzBle";
+
+    private BleService mService;
     private IBle mBle;
-    private String TAG = "heytzBle";
+    private boolean mScanning;
+    private Handler mHandler;
+
     private Context context;
     private CallbackContext _callbackcontext;
+
+
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder rawBinder) {
+            mService = ((BleService.LocalBinder) rawBinder).getService();
+            mBle = mService.getBle();
+            if (mBle != null && !mBle.adapterEnabled()) {
+                // TODO: enalbe adapter
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName classname) {
+            mService = null;
+        }
+    };
+
     private final BroadcastReceiver mBleReceiver = new BroadcastReceiver() {
 
         @Override
@@ -47,8 +73,13 @@ public class heytzBle extends CordovaPlugin {
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
+        Application attachApplication = cordova.getActivity().getApplication();
+        Intent bindIntent = new Intent(attachApplication, BleService.class);
+        attachApplication.bindService(bindIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
         // your init code here
         context = cordova.getActivity().getApplicationContext();
+        mHandler = new Handler();
+
     }
 
     @Override
@@ -62,6 +93,7 @@ public class heytzBle extends CordovaPlugin {
         }
         if (action.equals("startScan")) {
             this.startScan();
+            mScanning = false;
             return true;
         }
         if (action.equals("stopScan")) {
@@ -81,11 +113,41 @@ public class heytzBle extends CordovaPlugin {
     }
 
     private void startScan() {
-        mBle.startScan();
+        scanLeDevice(true);
     }
 
     private void stopScan() {
         mBle.stopScan();
     }
+    private void scanLeDevice(final boolean enable) {
+       // BleApplication app = (BleApplication) getApplication();
+        //mBle = app.getIBle();
+        if (mBle == null) {
+            return;
+        }
+        if (enable) {
+            // Stops scanning after a pre-defined scan period.
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mScanning = false;
+                    if (mBle != null) {
+                        mBle.stopScan();
+                    }
+                   // invalidateOptionsMenu();
+                }
+            }, SCAN_PERIOD);
 
+            mScanning = true;
+            if (mBle != null) {
+                mBle.startScan();
+            }
+        } else {
+            mScanning = false;
+            if (mBle != null) {
+                mBle.stopScan();
+            }
+        }
+        //invalidateOptionsMenu();
+    }
 }

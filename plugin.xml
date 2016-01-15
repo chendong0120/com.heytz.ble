@@ -8,7 +8,7 @@
     <platform name="android">
         <config-file parent="/*" target="res/xml/config.xml">
             <feature name="heytzBle">
-                <param name="android-package" value="com.heytz.ble.heytzBle"/>
+                <param name="android-package" value="com.heytz.ble.HeytzBle"/>
             </feature>
         </config-file>
         <config-file parent="/*" target="AndroidManifest.xml">
@@ -29,7 +29,7 @@
         <lib-file src="libs/com.broadcom.bt.jar"/>
         <lib-file src="libs/commons-codec-1.8.jar"/>
         <lib-file src="libs/samsung_ble_sdk_200.jar"/>
-        <source-file src="src/android/heytzBle/heytzBle.java" target-dir="src/com/heytz/ble"/>
+        <source-file src="src/android/heytzBle/HeytzBle.java" target-dir="src/com/heytz/ble"/>
 
         <source-file src="src/android/sdk/AndroidBle.java" target-dir="src/com/heytz/ble/sdk"/>
         <source-file src="src/android/sdk/BleGattCharacteristic.java" target-dir="src/com/heytz/ble/sdk"/>

@@ -11,11 +11,33 @@
                 <param name="android-package" value="com.heytz.ble.heytzBle"/>
             </feature>
         </config-file>
-        <config-file parent="/*" target="AndroidManifest.xml"></config-file>
+        <config-file parent="/*" target="AndroidManifest.xml">
+            <!--程序应该拥有蓝牙设备-->
+            <uses-feature
+                    android:name="android.hardware.bluetooth_le"
+                    android:required="true" />
+            <!--开启ble服务-->
+            <service
+                    android:name="com.heytz.ble.sdk.BleService"
+                    android:enabled="true" />
+            <!--蓝牙权限-->
+            <uses-permission android:name="android.permission.BLUETOOTH" />
+            <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+            <uses-permission android:name="android.permission.INTERNET" />
+        </config-file>
 
         <lib-file src="libs/com.broadcom.bt.jar"/>
         <lib-file src="libs/commons-codec-1.8.jar"/>
         <lib-file src="libs/samsung_ble_sdk_200.jar"/>
-        <source-file src="src/android/heytzBle.java" target-dir="src/com/heytz/ble/heytzBle"/>
+        <source-file src="src/android/heytzBle/heytzBle.java" target-dir="src/com/heytz/ble/heytzBle"/>
+
+        <source-file src="src/android/sdk/AndroidBle.javaBleGattCharacteristic.java" target-dir="src/com/heytz/ble/sdk"/>
+        <source-file src="src/android/sdk/BleGattService.java" target-dir="src/com/heytz/ble/sdk"/>
+        <source-file src="src/android/sdk/BleRequest.java" target-dir="src/com/heytz/ble/sdk"/>
+        <source-file src="src/android/sdk/BleService.java" target-dir="src/com/heytz/ble/sdk"/>
+        <source-file src="src/android/sdk/BroadcomBle.java" target-dir="src/com/heytz/ble/sdk"/>
+        <source-file src="src/android/sdk/IBle.java" target-dir="src/com/heytz/ble/sdk"/>
+        <source-file src="src/android/sdk/IBleRequestHandler.java" target-dir="src/com/heytz/ble/sdk"/>
+        <source-file src="src/android/sdk/SamsungBle.java" target-dir="src/com/heytz/ble/sdk"/>
     </platform>
 </plugin>

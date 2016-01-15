@@ -3,7 +3,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android">
     <name>heytzBle</name>
     <js-module name="heytzBle" src="www/heytzBle.js">
-        <clobbers target="cordova.plugins.heytzBle"/>
+        <clobbers target="heytzBle"/>
     </js-module>
     <platform name="android">
         <config-file parent="/*" target="res/xml/config.xml">

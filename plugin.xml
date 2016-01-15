@@ -32,6 +32,7 @@
         <source-file src="src/android/heytzBle/heytzBle.java" target-dir="src/com/heytz/ble/heytzBle"/>
 
         <source-file src="src/android/sdk/AndroidBle.java" target-dir="src/com/heytz/ble/sdk"/>
+        <source-file src="src/android/sdk/BleGattCharacteristic.java" target-dir="src/com/heytz/ble/sdk"/>
         <source-file src="src/android/sdk/BleGattService.java" target-dir="src/com/heytz/ble/sdk"/>
         <source-file src="src/android/sdk/BleRequest.java" target-dir="src/com/heytz/ble/sdk"/>
         <source-file src="src/android/sdk/BleService.java" target-dir="src/com/heytz/ble/sdk"/>

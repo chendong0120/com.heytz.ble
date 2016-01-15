@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="com.heytz.ble" version="0.0.1" xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>heytzBle</name>
+    <js-module name="heytzBle" src="www/heytzBle.js">
+        <clobbers target="cordova.plugins.heytzBle"/>
+    </js-module>
+    <platform name="android">
+        <config-file parent="/*" target="res/xml/config.xml">
+            <feature name="heytzBle">
+                <param name="android-package" value="com.heytz.ble.heytzBle"/>
+            </feature>
+        </config-file>
+        <config-file parent="/*" target="AndroidManifest.xml"></config-file>
+
+        <lib-file src="/lib/com.broadcom.bt.jar"/>
+        <lib-file src="/lib/commons-codec-1.8.jar"/>
+        <lib-file src="/lib/samsung_ble_sdk_200.jar"/>
+        <source-file src="src/android/heytzBle.java" target-dir="src/com/heytz/ble/heytzBle"/>
+    </platform>
+</plugin>

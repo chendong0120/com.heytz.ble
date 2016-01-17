@@ -15,21 +15,24 @@
             <!--程序应该拥有蓝牙设备-->
             <uses-feature
                     android:name="android.hardware.bluetooth_le"
-                    android:required="true" />
+                    android:required="true"/>
+
+            <!--蓝牙权限-->
+            <uses-permission android:name="android.permission.BLUETOOTH"/>
+            <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+            <uses-permission android:name="android.permission.INTERNET"/>
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <!--开启ble服务-->
             <service
                     android:name="com.heytz.ble.sdk.BleService"
-                    android:enabled="true" />
-            <!--蓝牙权限-->
-            <uses-permission android:name="android.permission.BLUETOOTH" />
-            <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-            <uses-permission android:name="android.permission.INTERNET" />
+                    android:enabled="true"/>
         </config-file>
-
         <lib-file src="libs/com.broadcom.bt.jar"/>
         <lib-file src="libs/commons-codec-1.8.jar"/>
         <lib-file src="libs/samsung_ble_sdk_200.jar"/>
         <source-file src="src/android/heytzBle/HeytzBle.java" target-dir="src/com/heytz/ble"/>
+        <source-file src="src/android/heytzBle/BleApplication.java" target-dir="src/com/heytz/ble"/>
 
         <source-file src="src/android/sdk/AndroidBle.java" target-dir="src/com/heytz/ble/sdk"/>
         <source-file src="src/android/sdk/BleGattCharacteristic.java" target-dir="src/com/heytz/ble/sdk"/>

@@ -1,11 +1,11 @@
 package com.heytz.ble;
 
-import android.app.Application;
 import android.bluetooth.BluetoothDevice;
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import com.heytz.ble.sdk.BleService;
 import com.heytz.ble.sdk.IBle;
 import org.apache.cordova.*;
@@ -28,24 +28,6 @@ public class HeytzBle extends CordovaPlugin {
 
     private Context context;
     private CallbackContext _callbackcontext;
-
-
-    private final ServiceConnection mServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder rawBinder) {
-            mService = ((BleService.LocalBinder) rawBinder).getService();
-            mBle = mService.getBle();
-            if (mBle != null && !mBle.adapterEnabled()) {
-                // TODO: enalbe adapter
-            }
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName classname) {
-            mService = null;
-        }
-    };
 
     private final BroadcastReceiver mBleReceiver = new BroadcastReceiver() {
 
@@ -72,12 +54,10 @@ public class HeytzBle extends CordovaPlugin {
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
-        super.initialize(cordova, webView);
-        Application attachApplication = cordova.getActivity().getApplication();
-        Intent bindIntent = new Intent(attachApplication, BleService.class);
-        attachApplication.bindService(bindIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
         // your init code here
+        super.initialize(cordova, webView);
         context = cordova.getActivity().getApplicationContext();
+        context.registerReceiver(mBleReceiver, BleService.getIntentFilter());
         mHandler = new Handler();
 
     }
@@ -85,12 +65,6 @@ public class HeytzBle extends CordovaPlugin {
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         _callbackcontext = callbackContext;
-        context.registerReceiver(mBleReceiver, BleService.getIntentFilter());
-        if (action.equals("coolMethod")) {
-            String message = args.getString(0);
-            this.coolMethod(message, callbackContext);
-            return true;
-        }
         if (action.equals("startScan")) {
             this.startScan();
             mScanning = false;
@@ -103,25 +77,17 @@ public class HeytzBle extends CordovaPlugin {
 
         return false;
     }
-
-    private void coolMethod(String message, CallbackContext callbackContext) {
-        if (message != null && message.length() > 0) {
-            callbackContext.success(message);
-        } else {
-            callbackContext.error("Expected one non-empty string argument.");
-        }
-    }
-
     private void startScan() {
         scanLeDevice(true);
     }
 
     private void stopScan() {
         mBle.stopScan();
+        scanLeDevice(false);
     }
     private void scanLeDevice(final boolean enable) {
-       // BleApplication app = (BleApplication) getApplication();
-        //mBle = app.getIBle();
+        BleApplication app = (BleApplication) cordova.getActivity().getApplication();
+        mBle = app.getIBle();
         if (mBle == null) {
             return;
         }
@@ -134,7 +100,6 @@ public class HeytzBle extends CordovaPlugin {
                     if (mBle != null) {
                         mBle.stopScan();
                     }
-                   // invalidateOptionsMenu();
                 }
             }, SCAN_PERIOD);
 

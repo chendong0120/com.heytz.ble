@@ -18,7 +18,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class UUIDHelper {
+public class HeytzUUIDHelper {
 
     // base UUID used to build 128 bit Bluetooth UUIDs
     public static final String UUID_BASE = "0000XXXX-0000-1000-8000-00805f9b34fb";

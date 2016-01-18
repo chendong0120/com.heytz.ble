@@ -88,7 +88,6 @@ public class HeytzBle extends CordovaPlugin {
                 //加载设备的信息,各个通道的信息.
                 try {
                     displayGattServices(mBle.getServices(mDeviceAddress));
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

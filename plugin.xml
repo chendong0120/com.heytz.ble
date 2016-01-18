@@ -33,7 +33,7 @@
         <lib-file src="libs/samsung_ble_sdk_200.jar"/>
         <source-file src="src/android/heytzBle/HeytzBle.java" target-dir="src/com/heytz/ble"/>
         <source-file src="src/android/heytzBle/BleApplication.java" target-dir="src/com/heytz/ble"/>
-        <source-file src="src/android/heytzBle/UUIDHelper.java" target-dir="src/com/heytz/ble"/>
+        <source-file src="src/android/heytzBle/HeytzUUIDHelper.java" target-dir="src/com/heytz/ble"/>
 
         <source-file src="src/android/sdk/AndroidBle.java" target-dir="src/com/heytz/ble/sdk"/>
         <source-file src="src/android/sdk/BleGattCharacteristic.java" target-dir="src/com/heytz/ble/sdk"/>

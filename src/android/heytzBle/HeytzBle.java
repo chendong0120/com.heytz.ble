@@ -7,9 +7,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import com.heytz.ble.sdk.BleGattCharacteristic;
+import com.heytz.ble.sdk.BleGattService;
 import com.heytz.ble.sdk.BleService;
 import com.heytz.ble.sdk.IBle;
-
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.cordova.*;
@@ -17,6 +17,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -36,6 +38,11 @@ public class HeytzBle extends CordovaPlugin {
     private static final long SCAN_PERIOD = 10000;
     private static final String TAG = "HeytzBle";
 
+    private ArrayList<ArrayList<BleGattCharacteristic>> mGattCharacteristics = new ArrayList<ArrayList<BleGattCharacteristic>>();
+    private final String LIST_NAME = "NAME";
+    private final String LIST_UUID = "UUID";
+    private final String CHARACTERISTICS = "Characteristics";
+
     private BleService mService;
     private IBle mBle;
     private Handler mHandler;
@@ -51,6 +58,7 @@ public class HeytzBle extends CordovaPlugin {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+            //扫描获取设备列表
             if (BleService.BLE_NOT_SUPPORTED.equals(action)) {
                 LOG.w(TAG, "Ble not support");
                 //todo 不支持ble
@@ -72,6 +80,19 @@ public class HeytzBle extends CordovaPlugin {
                 //todo 没有蓝牙设备
             }
 
+            if (BleService.BLE_GATT_CONNECTED.equals(action)) {
+                //连接状态
+            } else if (BleService.BLE_GATT_DISCONNECTED.equals(action)) {
+                //设备断开连接
+            } else if (BleService.BLE_SERVICE_DISCOVERED.equals(action)) {
+                //加载设备的信息,各个通道的信息.
+                try {
+                    displayGattServices(mBle.getServices(mDeviceAddress));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
 
 //            Bundle extras = intent.getExtras();
 //            if (!mDeviceAddress.equals(extras.getString(BleService.EXTRA_ADDR))) {
@@ -187,10 +208,11 @@ public class HeytzBle extends CordovaPlugin {
             return true;
         }
         /**
-         * 链接设备
+         * 连接设备
          */
         if (action.equals(CONNECT)) {
             String macAddress = args.getString(0);
+            mDeviceAddress = macAddress;
             this.connect(macAddress, callbackContext);
             return true;
         }
@@ -199,8 +221,8 @@ public class HeytzBle extends CordovaPlugin {
          */
         if (action.equals(STARTNOTIFICATION)) {
             String macAddress = args.getString(0);
-            UUID serviceUUID = uuidFromString(args.getString(1));
-            UUID characteristicUUID = uuidFromString(args.getString(2));
+            UUID serviceUUID = uuidFromString("F200");// uuidFromString(args.getString(1));
+            UUID characteristicUUID = uuidFromString("F201");// uuidFromString(args.getString(2));
 
             this.startNotification(macAddress, serviceUUID, characteristicUUID, callbackContext);
             return true;
@@ -254,7 +276,7 @@ public class HeytzBle extends CordovaPlugin {
 
     private void connect(String macAddress, CallbackContext callbackContext) {
         if (mBle.requestConnect(macAddress)) {
-            callbackContext.success();
+//            callbackContext.success();
         } else {
             callbackContext.error("Could not connect to " + macAddress);
         }
@@ -270,8 +292,16 @@ public class HeytzBle extends CordovaPlugin {
     private void startNotification(String macAddress, UUID serviceUUID, UUID characteristicUUID, CallbackContext callbackContext) {
         rawDataAvailableCallback = callbackContext;
         mDeviceAddress = macAddress;
-        mCharacteristic = mBle.getService(macAddress, serviceUUID).getCharacteristic(characteristicUUID);
-        mBle.requestCharacteristicNotification(macAddress, mCharacteristic);
+        ArrayList<BleGattService> bleGattServices = mBle.getServices(macAddress);
+        for (int i = 0; i < bleGattServices.size(); i++) {
+            LOG.w(TAG, bleGattServices.get(i).getName());
+            LOG.w(TAG, bleGattServices.get(i).getUuid().toString());
+        }
+        BleGattService bleGattService = mBle.getService(macAddress, serviceUUID);
+        if (bleGattService != null) {
+            mCharacteristic = bleGattService.getCharacteristic(characteristicUUID);
+            mBle.requestCharacteristicNotification(macAddress, mCharacteristic);
+        }
     }
 
     /**
@@ -289,6 +319,66 @@ public class HeytzBle extends CordovaPlugin {
         }
     }
 
+
+    // Demonstrates how to iterate through the supported GATT
+    // Services/Characteristics.
+    // In this sample, we populate the data structure that is bound to the
+    private void displayGattServices(List<BleGattService> gattServices) throws JSONException {
+        if (gattServices == null)
+            return;
+        String uuid = null;
+        String name = null;
+        String unknownServiceString = "Unknown service";
+        String unknownCharaString = "Unknown characteristic";
+
+        JSONArray gattServiceDataJsonArray = new JSONArray();
+
+        // Loops through available GATT Services.
+        for (BleGattService gattService : gattServices) {
+
+            uuid = gattService.getUuid().toString().toUpperCase();
+            name = Utils.BLE_SERVICES
+                    .containsKey(uuid) ? Utils.BLE_SERVICES.get(uuid)
+                    : unknownServiceString;
+            JSONObject currentServiceDataJsonObject = new JSONObject();
+
+            currentServiceDataJsonObject.put(LIST_NAME, name);
+            currentServiceDataJsonObject.put(LIST_UUID, uuid);
+
+
+            JSONArray gattCharacteristicGroupDataJsonArray = new JSONArray();
+
+            List<BleGattCharacteristic> gattCharacteristics = gattService
+                    .getCharacteristics();
+            // Loops through available Characteristics.
+            for (BleGattCharacteristic gattCharacteristic : gattCharacteristics) {
+
+                uuid = gattCharacteristic.getUuid().toString().toUpperCase();
+                name = Utils.BLE_CHARACTERISTICS.containsKey(uuid) ? Utils.BLE_CHARACTERISTICS
+                        .get(uuid) : unknownCharaString;
+
+                JSONObject currentCharaDataObject = new JSONObject();
+                currentCharaDataObject.put(LIST_NAME, name);
+                currentCharaDataObject.put(LIST_UUID, uuid);
+                gattCharacteristicGroupDataJsonArray.put(currentCharaDataObject);
+            }
+            currentServiceDataJsonObject.put(CHARACTERISTICS, gattCharacteristicGroupDataJsonArray);
+            gattServiceDataJsonArray.put(currentServiceDataJsonObject);
+        }
+
+        PluginResult result = new PluginResult(PluginResult.Status.OK, gattServiceDataJsonArray);
+        if (_callbackcontext != null)
+            _callbackcontext.sendPluginResult(result);
+
+
+    }
+
+    /**
+     * 根据string转换为uuid
+     *
+     * @param uuid
+     * @return
+     */
     private UUID uuidFromString(String uuid) {
         return HeytzUUIDHelper.uuidFromString(uuid);
     }

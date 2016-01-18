@@ -9,6 +9,7 @@ import android.os.Handler;
 import com.heytz.ble.sdk.BleGattCharacteristic;
 import com.heytz.ble.sdk.BleService;
 import com.heytz.ble.sdk.IBle;
+
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.cordova.*;
@@ -63,7 +64,8 @@ public class HeytzBle extends CordovaPlugin {
 
                 PluginResult result = new PluginResult(PluginResult.Status.OK, deviceToJSONObject(device));
                 result.setKeepCallback(true);
-                _callbackcontext.sendPluginResult(result);
+                if (_callbackcontext != null)
+                    _callbackcontext.sendPluginResult(result);
 
             } else if (BleService.BLE_NO_BT_ADAPTER.equals(action)) {
                 LOG.w(TAG, "No bluetooth adapter");
@@ -71,46 +73,46 @@ public class HeytzBle extends CordovaPlugin {
             }
 
 
-            Bundle extras = intent.getExtras();
-            if (!mDeviceAddress.equals(extras.getString(BleService.EXTRA_ADDR))) {
-                return;
-            }
-
-            String uuid = extras.getString(BleService.EXTRA_UUID);
-            if (uuid != null
-                    && !mCharacteristic.getUuid().toString().equals(uuid)) {
-                return;
-            }
-
-
-            if (BleService.BLE_GATT_DISCONNECTED.equals(action)) {//如果蓝牙断开链接.
-                LOG.w(TAG, "Device disconnected...");
-
-            } else if (BleService.BLE_CHARACTERISTIC_READ.equals(action)
-                    || BleService.BLE_CHARACTERISTIC_CHANGED.equals(action)) {  //当蓝牙设备有消息读取或者消息改变,
-                byte[] data = extras.getByteArray(BleService.EXTRA_VALUE);
-//                tv_ascii.setText(new String(val));
-//                tv_hex.setText("0x" + new String(Hex.encodeHex(val)));
-                if (data != null && data.length > 0) {
-                    PluginResult result = new PluginResult(PluginResult.Status.OK, data);
-                    result.setKeepCallback(true);
-                    rawDataAvailableCallback.sendPluginResult(result);
-                }
-
-            } else if (BleService.BLE_CHARACTERISTIC_NOTIFICATION
-                    .equals(action)) {//通知的状态.
-                LOG.w(TAG, "Notification state changed!");
-                mNotifyStarted = extras.getBoolean(BleService.EXTRA_VALUE);
-                if (mNotifyStarted) {
-                    LOG.w(TAG, "Stop Notify");
-                } else {
-                    LOG.w(TAG, "Start Notify");
-                }
-            } else if (BleService.BLE_CHARACTERISTIC_INDICATION.equals(action)) {//指示状态改变
-                LOG.w(TAG, "Indication state changed!");
-            } else if (BleService.BLE_CHARACTERISTIC_WRITE.equals(action)) {//写入消息成功.
-                LOG.w(TAG, "Write success!");
-            }
+//            Bundle extras = intent.getExtras();
+//            if (!mDeviceAddress.equals(extras.getString(BleService.EXTRA_ADDR))) {
+//                return;
+//            }
+//
+//            String uuid = extras.getString(BleService.EXTRA_UUID);
+//            if (uuid != null
+//                    && !mCharacteristic.getUuid().toString().equals(uuid)) {
+//                return;
+//            }
+//
+//
+//            if (BleService.BLE_GATT_DISCONNECTED.equals(action)) {//如果蓝牙断开链接.
+//                LOG.w(TAG, "Device disconnected...");
+//
+//            } else if (BleService.BLE_CHARACTERISTIC_READ.equals(action)
+//                    || BleService.BLE_CHARACTERISTIC_CHANGED.equals(action)) {  //当蓝牙设备有消息读取或者消息改变,
+//                byte[] data = extras.getByteArray(BleService.EXTRA_VALUE);
+////                tv_ascii.setText(new String(val));
+////                tv_hex.setText("0x" + new String(Hex.encodeHex(val)));
+//                if (data != null && data.length > 0) {
+//                    PluginResult result = new PluginResult(PluginResult.Status.OK, data);
+//                    result.setKeepCallback(true);
+//                    rawDataAvailableCallback.sendPluginResult(result);
+//                }
+//
+//            } else if (BleService.BLE_CHARACTERISTIC_NOTIFICATION
+//                    .equals(action)) {//通知的状态.
+//                LOG.w(TAG, "Notification state changed!");
+//                mNotifyStarted = extras.getBoolean(BleService.EXTRA_VALUE);
+//                if (mNotifyStarted) {
+//                    LOG.w(TAG, "Stop Notify");
+//                } else {
+//                    LOG.w(TAG, "Start Notify");
+//                }
+//            } else if (BleService.BLE_CHARACTERISTIC_INDICATION.equals(action)) {//指示状态改变
+//                LOG.w(TAG, "Indication state changed!");
+//            } else if (BleService.BLE_CHARACTERISTIC_WRITE.equals(action)) {//写入消息成功.
+//                LOG.w(TAG, "Write success!");
+//            }
         }
 
 
@@ -122,13 +124,13 @@ public class HeytzBle extends CordovaPlugin {
 
         try {
             json.put("id", device.getAddress()); // mac address
-            json.put("getUuids", device.getUuids());
+//            json.put("getUuids", device.getUuids());
             json.put("name", device.getName());
             json.put("address", device.getAddress()); // mac address
-            json.put("getBluetoothClass", device.getBluetoothClass());
-            json.put("getBondState", device.getBondState());
-            json.put("getType", device.getType());
-            json.put("getClass", device.getClass());
+//            json.put("getBluetoothClass", device.getBluetoothClass());
+//            json.put("getBondState", device.getBondState());
+//            json.put("getType", device.getType());
+//            json.put("getClass", device.getClass());
             json.put("describeContents", device.describeContents());
         } catch (JSONException e) { // this shouldn't happen
             e.printStackTrace();
@@ -182,6 +184,7 @@ public class HeytzBle extends CordovaPlugin {
                     callbackContext.error("Bluetooth is disabled.");
                 }
             }
+            return true;
         }
         /**
          * 链接设备
@@ -189,6 +192,7 @@ public class HeytzBle extends CordovaPlugin {
         if (action.equals(CONNECT)) {
             String macAddress = args.getString(0);
             this.connect(macAddress, callbackContext);
+            return true;
         }
         /**
          * 开始监听消息.
@@ -199,6 +203,7 @@ public class HeytzBle extends CordovaPlugin {
             UUID characteristicUUID = uuidFromString(args.getString(2));
 
             this.startNotification(macAddress, serviceUUID, characteristicUUID, callbackContext);
+            return true;
         }
         if (action.equals(WRITE)) {
             String macAddress = args.getString(0);
@@ -206,6 +211,7 @@ public class HeytzBle extends CordovaPlugin {
             UUID characteristicUUID = uuidFromString(args.getString(2));
             String val = args.getString(3);
             this.write(macAddress, serviceUUID, characteristicUUID, val);
+            return true;
         }
         return false;
     }
@@ -241,9 +247,9 @@ public class HeytzBle extends CordovaPlugin {
                 mBle.stopScan();
             }
         }
-        PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
-        result.setKeepCallback(true);
-        _callbackcontext.sendPluginResult(result);
+//        PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
+//        result.setKeepCallback(true);
+//        _callbackcontext.sendPluginResult(result);
     }
 
     private void connect(String macAddress, CallbackContext callbackContext) {

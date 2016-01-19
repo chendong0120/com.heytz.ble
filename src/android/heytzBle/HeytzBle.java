@@ -156,12 +156,12 @@ public class HeytzBle extends CordovaPlugin {
             json.put("id", device.getAddress()); // mac address
 //            json.put("getUuids", device.getUuids());
             json.put("name", device.getName());
-            json.put("address", device.getAddress()); // mac address
+//            json.put("address", device.getAddress()); // mac address
 //            json.put("getBluetoothClass", device.getBluetoothClass());
 //            json.put("getBondState", device.getBondState());
 //            json.put("getType", device.getType());
 //            json.put("getClass", device.getClass());
-            json.put("describeContents", device.describeContents());
+//            json.put("describeContents", device.describeContents());
         } catch (JSONException e) { // this shouldn't happen
             e.printStackTrace();
         }

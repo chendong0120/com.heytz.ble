@@ -25,8 +25,6 @@ android
 - [HeytzBle.isEnabled](#isenabled)
 - [HeytzBle.startNotification](#startNotification)
 - [HeytzBle.stopNotification](#stopNotification)
-
-
 - [HeytzBle.isConnected](#isconnected)(IOS)
 - [HeytzBle.read](#read)(IOS)
 - [HeytzBle.writeWithoutResponse](#writewithoutresponse)(IOS)

@@ -307,7 +307,7 @@ public class HeytzBle extends CordovaPlugin {
                         mBle.stopScan();
                     }
                 }
-            }, scanSeconds <= 0 ? SCAN_PERIOD : scanSeconds);
+            }, scanSeconds <= 0 ? SCAN_PERIOD : scanSeconds*1000);
             if (mBle != null) {
                 if (uuids != null) {
                     mBle.startScan(uuids);
@@ -463,7 +463,12 @@ public class HeytzBle extends CordovaPlugin {
      * @return
      */
     private UUID uuidFromString(String uuid) {
-        return HeytzUUIDHelper.uuidFromString(uuid);
+        if (uuid.length() > 4 && "0x".equals(uuid.substring(0,2))) {
+            return HeytzUUIDHelper.uuidFromString(uuid.substring(2));
+        } else {
+            return HeytzUUIDHelper.uuidFromString(uuid);
+        }
+
     }
 
     private UUID[] parseServiceUUIDList(JSONArray jsonArray) throws JSONException {

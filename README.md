@@ -17,14 +17,14 @@ android
 ## Methods
 
 - [HeytzBle.scan](#scan)
-- [HeytzBle.startScan](#startscan)
-- [HeytzBle.stopScan](#stopscan)
+- [HeytzBle.startScan](#startScan)
+- [HeytzBle.stopScan](#stopScan)
 - [HeytzBle.connect](#connect)
 - [HeytzBle.disconnect](#disconnect)
 - [HeytzBle.write](#write)
 - [HeytzBle.isEnabled](#isenabled)
-- [HeytzBle.startNotification](#startnotification)
-- [HeytzBle.stopNotification](#stopnotification)
+- [HeytzBle.startNotification](#startNotification)
+- [HeytzBle.stopNotification](#stopNotification)
 
 
 - [HeytzBle.isConnected](#isconnected)(IOS)
@@ -216,6 +216,39 @@ Use an [ArrayBuffer](#typed-arrays) when writing data.
     var data = new Uint32Array(1);
     data[0] = counterInput.value;
     ble.write(device_id, SERVICE, CHARACTERISTIC, data.buffer, success, failure);
+
+
+
+## startNotification
+
+Register to be notified when the value of a characteristic changes.
+
+    ble.startNotification(device_id, service_uuid, characteristic_uuid, success, failure);
+
+### Description
+
+Function `startNotification` registers a callback that is called *every time* the value of a characteristic changes. This method handles both `notifications` and `indications`. The success callback is called multiple times.
+
+Raw data is passed from native code to the success callback as an [ArrayBuffer](#typed-arrays).
+
+### Parameters
+
+- __device_id__: UUID or MAC address of the peripheral
+- __service_uuid__: UUID of the BLE service
+- __characteristic_uuid__: UUID of the BLE characteristic
+- __success__: Success callback function invoked every time a notification occurs
+- __failure__: Error callback function, invoked when error occurs. [optional]
+
+### Quick Example
+
+    var onData = function(buffer) {
+        // Decode the ArrayBuffer into a typed Array based on the data you expect
+        var data = new Uint8Array(buffer);
+        alert("Button state changed to " + data[0]);
+    }
+
+    ble.startNotification(device_id, "FFE0", "FFE1", onData, failure);
+
 
 ## stopNotification
 

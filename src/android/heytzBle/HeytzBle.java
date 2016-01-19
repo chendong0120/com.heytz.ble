@@ -46,7 +46,7 @@ public class HeytzBle extends CordovaPlugin {
     private BleService mService;
     private IBle mBle;
     private Handler mHandler;
-    private BleGattCharacteristic mCharacteristic;
+    private BleGattCharacteristic notifyCharacteristic;
     private BleGattCharacteristic writeCharacteristic;
     private String mDeviceAddress;          //当前监听的设备
 
@@ -176,7 +176,7 @@ public class HeytzBle extends CordovaPlugin {
 
             String uuid = extras.getString(BleService.EXTRA_UUID);
             if (uuid != null
-                    && !mCharacteristic.getUuid().toString().equals(uuid)) {
+                    && !notifyCharacteristic.getUuid().toString().equals(uuid)) {
                 return;
             }
             if (BleService.BLE_CHARACTERISTIC_READ.equals(action)
@@ -483,8 +483,8 @@ public class HeytzBle extends CordovaPlugin {
 //        }
         BleGattService bleGattService = mBle.getService(macAddress, serviceUUID);
         if (bleGattService != null) {
-            mCharacteristic = bleGattService.getCharacteristic(characteristicUUID);
-            mBle.requestCharacteristicNotification(macAddress, mCharacteristic);
+            notifyCharacteristic = bleGattService.getCharacteristic(characteristicUUID);
+            mBle.requestCharacteristicNotification(macAddress, notifyCharacteristic);
         }
     }
 
@@ -493,9 +493,9 @@ public class HeytzBle extends CordovaPlugin {
         _callbackcontext = callbackContext;
 //        BleGattService bleGattService = mBle.getService(macAddress, serviceUUID);
 //        if (bleGattService != null) {
-//               mCharacteristic = bleGattService.getCharacteristic(characteristicUUID);
-        if (mCharacteristic != null) {
-            if (mBle.requestStopNotification(macAddress, mCharacteristic)) {
+//               notifyCharacteristic = bleGattService.getCharacteristic(characteristicUUID);
+        if (notifyCharacteristic != null) {
+            if (mBle.requestStopNotification(macAddress, notifyCharacteristic)) {
 //                _callbackcontext.success();
             } else {
                 _callbackcontext.error("stopNotification is error");

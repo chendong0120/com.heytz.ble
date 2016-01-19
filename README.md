@@ -2,8 +2,11 @@
 黑子信息科技ble控制
 # *
 android
-    修改application  android:name 为:com.heytz.ble.BleApplication
-    例子:
+    put AndroidManifest.xml application
+
+    android:name 为:com.heytz.ble.BleApplication
+
+    Example:
          android:name="com.heytz.ble.BleApplication"
 
 

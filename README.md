@@ -36,7 +36,7 @@ android
 ## scan
 Scan and discover BLE peripherals.
 
-    ble.scan(services, seconds, success, failure);
+    HeytzBle.scan(services, seconds, success, failure);
 
 ### Description
 
@@ -65,7 +65,7 @@ Advertising information format varies depending on your platform. See [Advertisi
 
 ### Quick Example
 
-    ble.scan([], 5, function(device) {
+    HeytzBle.scan([], 5, function(device) {
         console.log(JSON.stringify(device));
     }, failure);
 
@@ -73,7 +73,7 @@ Advertising information format varies depending on your platform. See [Advertisi
 
 Scan and discover BLE peripherals.
 
-    ble.startScan(services, success, failure);
+    HeytzBle.startScan(services, success, failure);
 
 ### Description
 
@@ -100,7 +100,7 @@ Advertising information format varies depending on your platform. See [Advertisi
 
 ### Quick Example
 
-    ble.startScan([], function(device) {
+    HeytzBle.startScan([], function(device) {
         console.log(JSON.stringify(device));
     }, failure);
 
@@ -114,7 +114,7 @@ Advertising information format varies depending on your platform. See [Advertisi
 
 Stop scanning for BLE peripherals.
 
-    ble.stopScan(success, failure);
+    HeytzBle.stopScan(success, failure);
 
 ### Description
 
@@ -127,7 +127,7 @@ Function `stopScan` stops scanning for BLE devices.
 
 ### Quick Example
 
-    ble.startScan([], function(device) {
+    HeytzBle.startScan([], function(device) {
         console.log(JSON.stringify(device));
     }, failure);
 
@@ -150,7 +150,7 @@ Function `stopScan` stops scanning for BLE devices.
 
 Connect to a peripheral.
 
-    ble.connect(device_id, connectSuccess, connectFailure);
+    HeytzBle.connect(device_id, connectSuccess, connectFailure);
 
 ### Description
 
@@ -166,7 +166,7 @@ Function `connect` connects to a BLE peripheral. The callback is long running. S
 
 Disconnect.
 
-    ble.disconnect(device_id, [success], [failure]);
+    HeytzBle.disconnect(device_id, [success], [failure]);
 
 ### Description
 
@@ -182,7 +182,7 @@ Function `disconnect` disconnects the selected device.
 
 Writes data to a characteristic.
 
-    ble.write(device_id, service_uuid, characteristic_uuid, value, success, failure);
+    HeytzBle.write(device_id, service_uuid, characteristic_uuid, value, success, failure);
 
 ### Description
 
@@ -240,7 +240,7 @@ Function `stopNotification` stops a previously registered notification callback.
 
 Reports if bluetooth is enabled.
 
-    ble.isEnabled(success, failure);
+    HeytzBle.isEnabled(success, failure);
 
 ### Description
 
@@ -253,7 +253,7 @@ Function `isEnabled` calls the success callback when Bluetooth is enabled and th
 
 ### Quick Example
 
-    ble.isEnabled(
+    HeytzBle.isEnabled(
         function() {
             console.log("Bluetooth is enabled");
         },

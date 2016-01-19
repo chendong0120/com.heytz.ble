@@ -159,7 +159,10 @@ public class AndroidBle implements IBle, IBleRequestHandler {
     public void startScan() {
         mBtAdapter.startLeScan(mLeScanCallback);
     }
-
+    @Override
+    public void startScan(UUID[] uuidArr) {
+        mBtAdapter.startLeScan(uuidArr,mLeScanCallback);
+    }
     @Override
     public void stopScan() {
         mBtAdapter.stopLeScan(mLeScanCallback);

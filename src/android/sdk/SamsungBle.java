@@ -4,13 +4,13 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothProfile;
 import android.util.Log;
+import com.heytz.ble.sdk.BleRequest.RequestType;
 import com.samsung.android.sdk.bt.gatt.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import com.heytz.ble.sdk.BleRequest.RequestType;
 /**
  * Created by chendongdong on 16/1/15.
  */
@@ -215,6 +215,20 @@ public class SamsungBle implements IBle, IBleRequestHandler {
 
         mScanning = true;
         mBluetoothGatt.startScan();
+    }
+    @Override
+    public void startScan(UUID[] uuids) {
+        if (mScanning) {
+            return;
+        }
+
+        if (mBluetoothGatt == null) {
+            mScanning = false;
+            return;
+        }
+
+        mScanning = true;
+        mBluetoothGatt.startScan(uuids);
     }
 
     @Override

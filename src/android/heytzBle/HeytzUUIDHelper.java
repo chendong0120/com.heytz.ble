@@ -27,7 +27,7 @@ public class HeytzUUIDHelper {
     public static UUID uuidFromString(String uuid) {
 
         if (uuid.length() == 4) {
-            uuid = UUID_BASE.replace("XXXX", uuid);
+            uuid = UUID_BASE.replace("XXXX", uuid.toLowerCase());
         }
         return UUID.fromString(uuid);
     }

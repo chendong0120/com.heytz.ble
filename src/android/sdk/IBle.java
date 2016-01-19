@@ -18,6 +18,12 @@ public interface IBle {
     public void startScan();
 
     /**
+     *
+     * @param uuidArr
+     */
+    public void startScan(UUID[] uuidArr);
+
+    /**
      * Stop BLE scan.
      */
     public void stopScan();
@@ -34,8 +40,7 @@ public interface IBle {
      * {@link BleService#BLE_GATT_DISCONNECTED} broadcast if device
      * disconnected.
      *
-     * @param address
-     *            BLE device address.
+     * @param address BLE device address.
      */
     public void disconnect(String address);
 
@@ -83,8 +88,7 @@ public interface IBle {
      * read.
      *
      * @param address
-     * @param characteristic
-     *            Get characteristic from {@link BleGattService}
+     * @param characteristic Get characteristic from {@link BleGattService}
      * @return if request be inserted into queue successfully.
      */
     public boolean requestReadCharacteristic(String address,
@@ -98,8 +102,7 @@ public interface IBle {
      * also.
      *
      * @param address
-     * @param characteristic
-     *            Get characteristic from {@link BleGattService}
+     * @param characteristic Get characteristic from {@link BleGattService}
      * @return if request be inserted into queue successfully.
      */
     public boolean requestCharacteristicNotification(String address,
@@ -116,8 +119,7 @@ public interface IBle {
      * also.
      *
      * @param address
-     * @param characteristic
-     *            Get characteristic from {@link BleGattService}
+     * @param characteristic Get characteristic from {@link BleGattService}
      * @return if request be inserted into queue successfully.
      */
     public boolean requestIndication(String address,
@@ -129,10 +131,8 @@ public interface IBle {
      * value be written.
      *
      * @param address
-     * @param characteristic
-     *            Get characteristic from {@link BleGattService}
-     * @param remark
-     *            For debug purpose.
+     * @param characteristic Get characteristic from {@link BleGattService}
+     * @param remark         For debug purpose.
      * @return if request be inserted into queue successfully.
      */
     public boolean requestWriteCharacteristic(String address,

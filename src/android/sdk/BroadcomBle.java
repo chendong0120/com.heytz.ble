@@ -182,7 +182,20 @@ public class BroadcomBle implements IBle, IBleRequestHandler {
         mScanning = true;
         mBluetoothGatt.startScan();
     }
+    @Override
+    public void startScan(UUID[] uuids) {
+        if (mScanning) {
+            return;
+        }
 
+        if (mBluetoothGatt == null) {
+            mScanning = false;
+            return;
+        }
+
+        mScanning = true;
+        mBluetoothGatt.startScan(uuids);
+    }
     @Override
     public void stopScan() {
         if (!mScanning || mBluetoothGatt == null) {

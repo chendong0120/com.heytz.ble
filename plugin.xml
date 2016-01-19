@@ -46,4 +46,25 @@
         <source-file src="src/android/sdk/IBleRequestHandler.java" target-dir="src/com/heytz/ble/sdk"/>
         <source-file src="src/android/sdk/SamsungBle.java" target-dir="src/com/heytz/ble/sdk"/>
     </platform>
+    <platform name="ios">
+
+        <config-file target="config.xml" parent="/widget">
+            <feature name="HeytzBle">
+                <param name="ios-package" value="HeytzBleCentralPlugin" onload="true"/>
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/HeytzBleCentralPlugin.h" target-dir="HeytzBleCentralPlugin" />
+        <source-file src="src/ios/HeytzBleCentralPlugin.m" target-dir="HeytzBleCentralPlugin" />
+
+        <header-file src="src/ios/HeytzBLECommandContext.h" target-dir="HeytzBleCentralPlugin" />
+        <source-file src="src/ios/HeytzBLECommandContext.m" target-dir="HeytzBleCentralPlugin" />
+
+        <header-file src="src/ios/HeytzCBPeripheral+Extensions.h" target-dir="HeytzBleCentralPlugin" />
+        <source-file src="src/ios/HeytzCBPeripheral+Extensions.m" target-dir="HeytzBleCentralPlugin" />
+
+        <!-- frameworks -->
+        <framework src="CoreBluetooth.framework" />
+
+    </platform>
 </plugin>

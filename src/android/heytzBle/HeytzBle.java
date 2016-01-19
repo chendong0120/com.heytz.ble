@@ -192,16 +192,27 @@ public class HeytzBle extends CordovaPlugin {
         _callbackcontext = callbackContext;
         this.initmBle();
         if (action.equals(SCAN)) {
-            scanLeDevice(true, null, 0);
+            JSONArray jsonArray = args.getJSONArray(0);
+            int scanSeconds = args.getInt(1);
+            if (jsonArray.length() > 0) {
+                UUID[] serviceUUIDs = parseServiceUUIDList(jsonArray);
+                scanLeDevice(true, serviceUUIDs, scanSeconds);
+            } else {
+                scanLeDevice(true, null, scanSeconds);
+            }
             return true;
         }
         /**
          * 扫描蓝牙设备
          */
         if (action.equals(STARTSCAN)) {
-            UUID[] serviceUUIDs = parseServiceUUIDList(args.getJSONArray(0));
-            int scanSeconds = args.getInt(1);
-            scanLeDevice(true, serviceUUIDs, scanSeconds);
+            JSONArray jsonArray = args.getJSONArray(0);
+            if (jsonArray.length() > 0) {
+                UUID[] serviceUUIDs = parseServiceUUIDList(args.getJSONArray(0));
+                scanLeDevice(true, serviceUUIDs, 0);
+            } else {
+                scanLeDevice(true, null, 0);
+            }
             return true;
         }
         /**
@@ -359,13 +370,6 @@ public class HeytzBle extends CordovaPlugin {
         }
     }
 
-    /**
-     * 关闭监听
-     * @param macAddress
-     * @param serviceUUID
-     * @param characteristicUUID
-     * @param callbackContext
-     */
     private void stopNotification(String macAddress, UUID serviceUUID, UUID characteristicUUID, CallbackContext callbackContext) {
         rawDataAvailableCallback = null;
         BleGattService bleGattService = mBle.getService(macAddress, serviceUUID);
@@ -462,12 +466,6 @@ public class HeytzBle extends CordovaPlugin {
         return HeytzUUIDHelper.uuidFromString(uuid);
     }
 
-    /**
-     *u 将uuid array转换成UUID[]
-     * @param jsonArray
-     * @return
-     * @throws JSONException
-     */
     private UUID[] parseServiceUUIDList(JSONArray jsonArray) throws JSONException {
         List<UUID> serviceUUIDs = new ArrayList<UUID>();
 

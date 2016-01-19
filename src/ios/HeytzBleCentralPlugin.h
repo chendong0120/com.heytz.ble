@@ -12,8 +12,8 @@
 
 #import <Cordova/CDV.h>
 #import <CoreBluetooth/CoreBluetooth.h>
-#import "BLECommandContext.h"
-#import "CBPeripheral+Extensions.h"
+#import "HeytzBLECommandContext.h"
+#import "HeytzCBPeripheral+Extensions.h"
 
 @interface HeytzBleCentralPlugin : CDVPlugin <CBCentralManagerDelegate, CBPeripheralDelegate> {
     NSString* discoverPeripherialCallbackId;

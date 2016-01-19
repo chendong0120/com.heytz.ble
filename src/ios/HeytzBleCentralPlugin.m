@@ -84,7 +84,7 @@
 - (void)read:(CDVInvokedUrlCommand*)command {
     NSLog(@"read");
     
-    BLECommandContext *context = [self getData:command prop:CBCharacteristicPropertyRead];
+    HeytzBLECommandContext *context = [self getData:command prop:CBCharacteristicPropertyRead];
     if (context) {
         
         CBPeripheral *peripheral = [context peripheral];
@@ -101,7 +101,7 @@
 // write: function (device_id, service_uuid, characteristic_uuid, value, success, failure) {
 - (void)write:(CDVInvokedUrlCommand*)command {
     
-    BLECommandContext *context = [self getData:command prop:CBCharacteristicPropertyWrite];
+    HeytzBLECommandContext *context = [self getData:command prop:CBCharacteristicPropertyWrite];
     NSData *message = [command.arguments objectAtIndex:3]; // This is binary
     if (context) {
         
@@ -131,7 +131,7 @@
 - (void)writeWithoutResponse:(CDVInvokedUrlCommand*)command {
     NSLog(@"writeWithoutResponse");
     
-    BLECommandContext *context = [self getData:command prop:CBCharacteristicPropertyWriteWithoutResponse];
+    HeytzBLECommandContext *context = [self getData:command prop:CBCharacteristicPropertyWriteWithoutResponse];
     NSData *message = [command.arguments objectAtIndex:3]; // This is binary
     
     if (context) {
@@ -156,7 +156,7 @@
 - (void)startNotification:(CDVInvokedUrlCommand*)command {
     NSLog(@"registering for notification");
     
-    BLECommandContext *context = [self getData:command prop:CBCharacteristicPropertyNotify]; // TODO name this better
+    HeytzBLECommandContext *context = [self getData:command prop:CBCharacteristicPropertyNotify]; // TODO name this better
     
     if (context) {
         CBPeripheral *peripheral = [context peripheral];
@@ -176,7 +176,7 @@
 - (void)stopNotification:(CDVInvokedUrlCommand*)command {
     NSLog(@"registering for notification");
     
-    BLECommandContext *context = [self getData:command prop:CBCharacteristicPropertyNotify]; // TODO name this better
+    HeytzBLECommandContext *context = [self getData:command prop:CBCharacteristicPropertyNotify]; // TODO name this better
     
     if (context) {
         CBPeripheral *peripheral = [context peripheral];
@@ -545,7 +545,7 @@
 }
 
 // expecting deviceUUID, serviceUUID, characteristicUUID in command.arguments
--(BLECommandContext*) getData:(CDVInvokedUrlCommand*)command prop:(CBCharacteristicProperties)prop {
+-(HeytzBLECommandContext*) getData:(CDVInvokedUrlCommand*)command prop:(CBCharacteristicProperties)prop {
     NSLog(@"getData");
     
     CDVPluginResult *pluginResult = nil;
@@ -614,7 +614,7 @@
         return nil;
     }
     
-    BLECommandContext *context = [[BLECommandContext alloc] init];
+    HeytzBLECommandContext *context = [[HeytzBLECommandContext alloc] init];
     [context setPeripheral:peripheral];
     [context setService:service];
     [context setCharacteristic:characteristic];

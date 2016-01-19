@@ -1,4 +1,11 @@
 var exec = require('cordova/exec');
+var stringToArrayBuffer = function (str) {
+    var ret = new Uint8Array(str.length);
+    for (var i = 0; i < str.length; i++) {
+        ret[i] = str.charCodeAt(i);
+    }
+    return ret.buffer;
+};
 
 module.exports = {
     scan: function (success, error) {
@@ -28,6 +35,16 @@ module.exports = {
         exec(success, error, 'HeytzBle', 'stopNotification', [device_id, serverUUID, characteristicUUID]);
     },
     write: function (device_id, serverUUID, characteristicUUID, value, success, error) {
+        // convert to ArrayBuffer
+        if (typeof value === 'string') {
+            value = stringToArrayBuffer(value);
+        } else if (value instanceof Array) {
+            // assuming array of interger
+            value = new Uint8Array(value).buffer;
+        } else if (value instanceof Uint8Array) {
+            value = value.buffer;
+        }
+
         exec(success, error, 'HeytzBle', 'write', [device_id, serverUUID, characteristicUUID, value]);
     },
 };

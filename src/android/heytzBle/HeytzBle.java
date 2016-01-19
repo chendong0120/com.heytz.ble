@@ -359,6 +359,13 @@ public class HeytzBle extends CordovaPlugin {
         }
     }
 
+    /**
+     * 关闭监听
+     * @param macAddress
+     * @param serviceUUID
+     * @param characteristicUUID
+     * @param callbackContext
+     */
     private void stopNotification(String macAddress, UUID serviceUUID, UUID characteristicUUID, CallbackContext callbackContext) {
         rawDataAvailableCallback = null;
         BleGattService bleGattService = mBle.getService(macAddress, serviceUUID);
@@ -455,6 +462,12 @@ public class HeytzBle extends CordovaPlugin {
         return HeytzUUIDHelper.uuidFromString(uuid);
     }
 
+    /**
+     *u 将uuid array转换成UUID[]
+     * @param jsonArray
+     * @return
+     * @throws JSONException
+     */
     private UUID[] parseServiceUUIDList(JSONArray jsonArray) throws JSONException {
         List<UUID> serviceUUIDs = new ArrayList<UUID>();
 

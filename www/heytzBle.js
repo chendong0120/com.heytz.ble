@@ -8,17 +8,14 @@ var stringToArrayBuffer = function (str) {
 };
 
 module.exports = {
-    scan: function (success, error) {
-        //todo 需要修改
-        //exec(success, error, "HeytzBle", "scan", [services, seconds]);
-        exec(success, error, "HeytzBle", "scan", []);
+    scan: function (services, seconds, success, error) {
+        if (services === null) services = [];
+        if (seconds === null) seconds = 0;
+        exec(success, error, "HeytzBle", "scan", [services, seconds]);
     },
-    startScan: function (uuid, scanSeconds, success, error) {
-        if (uuid === null) uuid = [];
-        if (scanSeconds === null) scanSeconds = 0;
-        //todo
-        //exec(success, error, "HeytzBle", "startScan", [scanSeconds]);
-        exec(success, error, "HeytzBle", "startScan", [uuid, scanSeconds]);
+    startScan: function (services, success, error) {
+        if (services === null) services = [];
+        exec(success, error, "HeytzBle", "startScan", [services]);
     },
     stopScan: function (success, error) {
         exec(success, error, "HeytzBle", "stopScan", []);

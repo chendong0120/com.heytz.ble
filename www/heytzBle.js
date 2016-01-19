@@ -1,8 +1,11 @@
 var exec = require('cordova/exec');
 
 module.exports = {
-    startScan: function (success, error) {
-        exec(success, error, "HeytzBle", "startScan", []);
+    scan: function (success, error) {
+        exec(success, error, "HeytzBle", "scan", []);
+    },
+    startScan: function (uuid,scanSeconds,success, error) {
+        exec(success, error, "HeytzBle", "startScan", [uuid,scanSeconds]);
     },
     stopScan: function (success, error) {
         exec(success, error, "HeytzBle", "stopScan", []);
@@ -13,7 +16,16 @@ module.exports = {
     connect: function (device_id, success, error) {
         exec(success, error, 'HeytzBle', 'connect', [device_id]);
     },
+    disconnect: function (device_id, success, error) {
+        exec(success, error, 'HeytzBle', 'disconnect', [device_id]);
+    },
     startNotification: function (device_id, serverUUID, characteristicUUID, success, error) {
         exec(success, error, 'HeytzBle', 'startNotification', [device_id, serverUUID, characteristicUUID]);
+    },
+    stopNotification: function (device_id, serverUUID, characteristicUUID, success, error) {
+        exec(success, error, 'HeytzBle', 'stopNotification', [device_id, serverUUID, characteristicUUID]);
+    },
+    write: function (device_id, serverUUID, characteristicUUID,value, success, error) {
+        exec(success, error, 'HeytzBle', 'write', [device_id, serverUUID, characteristicUUID,value]);
     },
 };

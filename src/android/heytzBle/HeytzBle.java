@@ -10,8 +10,6 @@ import com.heytz.ble.sdk.BleGattCharacteristic;
 import com.heytz.ble.sdk.BleGattService;
 import com.heytz.ble.sdk.BleService;
 import com.heytz.ble.sdk.IBle;
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.cordova.*;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -118,8 +116,7 @@ public class HeytzBle extends CordovaPlugin {
             } else if (BleService.BLE_CHARACTERISTIC_READ.equals(action)
                     || BleService.BLE_CHARACTERISTIC_CHANGED.equals(action)) {  //当蓝牙设备有消息读取或者消息改变,
                 byte[] data = extras.getByteArray(BleService.EXTRA_VALUE);
-//                tv_ascii.setText(new String(val));
-//                tv_hex.setText("0x" + new String(Hex.encodeHex(val)));
+//              new String(Hex.encodeHex(val));
                 if (data != null && data.length > 0) {
                     PluginResult result = new PluginResult(PluginResult.Status.OK, data);
                     result.setKeepCallback(true);
@@ -191,7 +188,7 @@ public class HeytzBle extends CordovaPlugin {
     }
 
     @Override
-    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+    public boolean execute(String action, CordovaArgs args, CallbackContext callbackContext) throws JSONException {
         _callbackcontext = callbackContext;
         this.initmBle();
         if (action.equals(SCAN)) {
@@ -274,7 +271,7 @@ public class HeytzBle extends CordovaPlugin {
             String macAddress = args.getString(0);
             UUID serviceUUID = uuidFromString(args.getString(1));
             UUID characteristicUUID = uuidFromString(args.getString(2));
-            String val = args.getString(3);
+            byte[] val = args.getArrayBuffer(3);
             this.write(macAddress, serviceUUID, characteristicUUID, val);
             return true;
         }
@@ -378,19 +375,18 @@ public class HeytzBle extends CordovaPlugin {
     /**
      * 写入消息
      */
-    private void write(String macAddress, UUID serviceUUID, UUID characteristicUUID, String val) {
+    private void write(String macAddress, UUID serviceUUID, UUID characteristicUUID, byte[] val) {
         try {
             mCharacteristic = mBle.getService(macAddress, serviceUUID).getCharacteristic(characteristicUUID);
-            byte[] data = Hex.decodeHex(val.toCharArray());
-            mCharacteristic.setValue(data);
-
+//            byte[] data = Hex.decodeHex(val.toCharArray());
+            mCharacteristic.setValue(val);
             if (mBle.requestWriteCharacteristic(mDeviceAddress,
                     mCharacteristic, "")) {
                 _callbackcontext.success();
             } else {
                 _callbackcontext.error("write is error!");
             }
-        } catch (DecoderException e) {
+        } catch (Exception e) {
             _callbackcontext.error("write is error!" + e.getMessage());
         }
     }

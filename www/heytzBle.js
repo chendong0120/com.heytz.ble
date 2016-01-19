@@ -44,6 +44,8 @@ module.exports = {
             value = new Uint8Array(value).buffer;
         } else if (value instanceof Uint8Array) {
             value = value.buffer;
+        } else if (value instanceof Uint32Array) {
+            value = value.buffer;
         }
 
         exec(success, error, 'HeytzBle', 'write', [device_id, serverUUID, characteristicUUID, value]);

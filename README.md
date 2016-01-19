@@ -102,7 +102,7 @@ Advertising information format varies depending on your platform. See [Advertisi
         console.log(JSON.stringify(device));
     }, failure);
 
-    setTimeout(ble.stopScan,
+    setTimeout(HeytzBle.stopScan,
         5000,
         function() { console.log("Scan complete"); },
         function() { console.log("stopScan failed"); }
@@ -129,7 +129,7 @@ Function `stopScan` stops scanning for BLE devices.
         console.log(JSON.stringify(device));
     }, failure);
 
-    setTimeout(ble.stopScan,
+    setTimeout(HeytzBle.stopScan,
         5000,
         function() { console.log("Scan complete"); },
         function() { console.log("stopScan failed"); }
@@ -137,7 +137,7 @@ Function `stopScan` stops scanning for BLE devices.
 
     /* Alternate syntax
     setTimeout(function() {
-        ble.stopScan(
+        HeytzBle.stopScan(
             function() { console.log("Scan complete"); },
             function() { console.log("stopScan failed"); }
         );
@@ -201,27 +201,31 @@ Use an [ArrayBuffer](#typed-arrays) when writing data.
     // send 1 byte to switch a light on
     var data = new Uint8Array(1);
     data[0] = 1;
-    ble.write(device_id, "FF10", "FF11", data.buffer, success, failure);
+    HeytzBle.write(device_id, "FF10", "FF11", data.buffer, success, failure);
 
     // send a 3 byte value with RGB color
     var data = new Uint8Array(3);
     data[0] = 0xFF;  // red
     data[0] = 0x00; // green
     data[0] = 0xFF; // blue
-    ble.write(device_id, "ccc0", "ccc1", data.buffer, success, failure);
+    HeytzBle.write(device_id, "ccc0", "ccc1", data.buffer, success, failure);
 
     // send a 32 bit integer
     var data = new Uint32Array(1);
     data[0] = counterInput.value;
-    ble.write(device_id, SERVICE, CHARACTERISTIC, data.buffer, success, failure);
+    HeytzBle.write(device_id, SERVICE, CHARACTERISTIC, data.buffer, success, failure);
 
+    // send a array
+    var data = [];
+    data[0] = 162;
+    HeytzBle.write(device_id, SERVICE, CHARACTERISTIC, data, success, failure);
 
 
 ## startNotification
 
 Register to be notified when the value of a characteristic changes.
 
-    ble.startNotification(device_id, service_uuid, characteristic_uuid, success, failure);
+    HeytzBle.startNotification(device_id, service_uuid, characteristic_uuid, success, failure);
 
 ### Description
 
@@ -245,14 +249,14 @@ Raw data is passed from native code to the success callback as an [ArrayBuffer](
         alert("Button state changed to " + data[0]);
     }
 
-    ble.startNotification(device_id, "FFE0", "FFE1", onData, failure);
+    HeytzBle.startNotification(device_id, "FFE0", "FFE1", onData, failure);
 
 
 ## stopNotification
 
 Stop being notified when the value of a characteristic changes.
 
-ble.stopNotification(device_id, service_uuid, characteristic_uuid, success, failure);
+HeytzBle.stopNotification(device_id, service_uuid, characteristic_uuid, success, failure);
 
 ### Description
 

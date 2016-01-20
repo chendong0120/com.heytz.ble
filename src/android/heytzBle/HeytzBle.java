@@ -145,11 +145,10 @@ public class HeytzBle extends CordovaPlugin {
                 }
 
                 //连接状态的回调,如果设备断开连接那么就发送disconnected;
-                if (connectCallbackcontext != null) {
-                    PluginResult result = new PluginResult(PluginResult.Status.OK, jsonObject);
-                    connectCallbackcontext.sendPluginResult(result);
-                    // connectCallbackcontext = null;
-                }
+//                if (connectCallbackcontext != null) {
+//                    PluginResult result = new PluginResult(PluginResult.Status.OK, jsonObject);
+//                    connectCallbackcontext.sendPluginResult(result);
+//                }
             } else if (BleService.BLE_SERVICE_DISCOVERED.equals(action)) {//设备的服务被发现
                 //加载设备的信息,各个通道的信息.
                 try {
@@ -365,10 +364,10 @@ public class HeytzBle extends CordovaPlugin {
          * 断开连接.
          */
         if (action.equals(DISCONNECT)) {
-            connectCallbackcontext = callbackContext;
+//            connectCallbackcontext = callbackContext;
             String macAddress = args.getString(0);
             mDeviceAddress = macAddress;
-            this.disconnect(macAddress);
+            this.disconnect(macAddress,callbackContext);
             return true;
         }
         /**
@@ -460,9 +459,10 @@ public class HeytzBle extends CordovaPlugin {
      *
      * @param macAddress
      */
-    private void disconnect(String macAddress) {
+    private void disconnect(String macAddress, CallbackContext callbackContext) {
         if (mBle != null) {
             mBle.disconnect(macAddress);
+            callbackContext.success();
         }
     }
 

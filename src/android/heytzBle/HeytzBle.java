@@ -367,7 +367,7 @@ public class HeytzBle extends CordovaPlugin {
 //            connectCallbackcontext = callbackContext;
             String macAddress = args.getString(0);
             mDeviceAddress = macAddress;
-            this.disconnect(macAddress,callbackContext);
+            this.disconnect(macAddress, callbackContext);
             return true;
         }
         /**
@@ -462,6 +462,8 @@ public class HeytzBle extends CordovaPlugin {
     private void disconnect(String macAddress, CallbackContext callbackContext) {
         if (mBle != null) {
             mBle.disconnect(macAddress);
+            context.unregisterReceiver(mBleReceiver);
+            context.registerReceiver(mBleReceiver, BleService.getIntentFilter());
             callbackContext.success();
         }
     }

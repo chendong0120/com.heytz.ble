@@ -229,10 +229,10 @@ static char ADVERTISEMENT_RSSI_IDENTIFER;
 // Borrowed from Cordova messageFromArrayBuffer since Cordova doesn't handle NSData in NSDictionary
 id dataToArrayBuffer(NSData* data)
 {
-    return @{
-             @"CDVType" : @"ArrayBuffer",
-             @"data" :[data base64EncodedString]
-             };
+     return @{
+                 @"CDVType" : @"ArrayBuffer",
+                 @"data" :[data base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]
+                 };
 }
 
 

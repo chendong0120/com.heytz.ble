@@ -28,7 +28,7 @@
 - [HeytzBle.startNotification](#startNotification)
 - [HeytzBle.stopNotification](#stopNotification)
 - [HeytzBle.isConnected](#isconnected)
-- [HeytzBle.read](#read)(IOS)
+- [HeytzBle.read](#read)
 - [HeytzBle.writeWithoutResponse](#writewithoutresponse)(IOS)
 - [HeytzBle.showBluetoothSettings](#showbluetoothsettings)
 - [HeytzBle.enable](#enable)(Android)
@@ -300,6 +300,28 @@ Function `isConnected` calls the success callback when the peripheral is connect
             console.log("Peripheral is *not* connected");
         }
     );
+
+
+## read
+
+Reads the value of a characteristic.
+
+    ble.read(device_id, service_uuid, characteristic_uuid, success, failure);
+
+### Description
+
+Function `read` reads the value of the characteristic.
+
+Raw data is passed from native code to the callback as an [ArrayBuffer](#typed-arrays).
+
+### Parameters
+
+- __device_id__: UUID or MAC address of the peripheral
+- __service_uuid__: UUID of the BLE service
+- __characteristic_uuid__: UUID of the BLE characteristic
+- __success__: Success callback function that is invoked when the connection is successful. [optional]
+- __failure__: Error callback function, invoked when error occurs. [optional]
+
 
 
 ## showBluetoothSettings

@@ -1,8 +1,6 @@
 package com.heytz.ble;
 
 import android.Manifest;
-import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -49,8 +47,8 @@ public class HeytzBle extends CordovaPlugin {
     private static final String STARTNOTIFICATION = "startNotification"; // register for characteristic notification
     private static final String STOPNOTIFICATION = "stopNotification";   // unregister for characteristic notification
     private static final String WRITE = "write";
+    private static final String READ = "read";
     private static final String SETTINGS = "showBluetoothSettings";
-    private static final String ENABLE = "enable";
 
     private static final long SCAN_PERIOD = 10000;
     private static final String TAG = "\n=======HeytzBle========";
@@ -65,19 +63,15 @@ public class HeytzBle extends CordovaPlugin {
     private Handler mHandler;
     private BleGattCharacteristic notifyCharacteristic;
     private BleGattCharacteristic writeCharacteristic;
+    private BleGattCharacteristic readCharacteristic;
     private String currentDeviceAddress;            //当前监听的设备
 
     private boolean mNotifyStarted;
-
-    private CallbackContext enableBluetoothCallback;
-    private static final int REQUEST_ENABLE_BLUETOOTH = 1;
-
     private CallbackContext _callbackcontext;
     private CallbackContext scancallbackcontext;
     private CallbackContext connectCallbackcontext;
     private CallbackContext rawDataAvailableCallback;
-
-
+    private CallbackContext readCallbackcontext;
     // Android 23 requires new permissions for mBLEServiceOperate.startScan()
     private static final String ACCESS_COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int REQUEST_ACCESS_COARSE_LOCATION = 2;
@@ -150,6 +144,36 @@ public class HeytzBle extends CordovaPlugin {
         }
 
         /**
+         * 接收读取消息的状态
+         *
+         * @param context
+         * @param intent
+         */
+        private void readOnReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            Bundle extras = intent.getExtras();
+            if (currentDeviceAddress == null || extras == null || readCharacteristic == null)
+                return;
+            if (!currentDeviceAddress.equals(extras.getString(BleService.EXTRA_ADDR))) {
+                return;
+            }
+
+            String uuid = extras.getString(BleService.EXTRA_UUID);
+            if (uuid != null && !readCharacteristic.getUuid().toString().equals(uuid)) {
+                return;
+            }
+            if (BleService.BLE_CHARACTERISTIC_READ.equals(action)) {//读取消息成功.
+                LOG.w(TAG, "read success!");
+                byte[] data = extras.getByteArray(BleService.EXTRA_VALUE);
+                if (data != null && data.length > 0) {
+                    PluginResult result = new PluginResult(PluginResult.Status.OK, data);
+                    if (readCallbackcontext != null)
+                        readCallbackcontext.sendPluginResult(result);
+                }
+            }
+        }
+
+        /**
          * 设备状态的回调
          *
          * @param context
@@ -204,8 +228,7 @@ public class HeytzBle extends CordovaPlugin {
                     && !notifyCharacteristic.getUuid().toString().equals(uuid)) {
                 return;
             }
-            if (BleService.BLE_CHARACTERISTIC_READ.equals(action)
-                    || BleService.BLE_CHARACTERISTIC_CHANGED.equals(action)) {  //当蓝牙设备有消息读取或者消息改变,
+            if (BleService.BLE_CHARACTERISTIC_CHANGED.equals(action)) {  //当蓝牙设备有通知消息
                 byte[] data = extras.getByteArray(BleService.EXTRA_VALUE);
 //              new String(Hex.encodeHex(val));
                 if (data != null && data.length > 0) {
@@ -273,6 +296,8 @@ public class HeytzBle extends CordovaPlugin {
             scanOnReceive(context, intent);
             //写入数据的状态回调
             writeOnReceive(context, intent);
+            //读取数据
+            readOnReceive(context, intent);
             //设备状态的回调
             deviceOnReceive(context, intent);
             //数据监听的回调
@@ -378,22 +403,24 @@ public class HeytzBle extends CordovaPlugin {
             this.stopNotification(macAddress, serviceUUID, characteristicUUID, callbackContext);
             return true;
         } else if (action.equals(WRITE)) {//发送信息到指定mac
+            _callbackcontext = callbackContext;
             String macAddress = args.getString(0);
             UUID serviceUUID = uuidFromString(args.getString(1));
             UUID characteristicUUID = uuidFromString(args.getString(2));
             byte[] val = args.getArrayBuffer(3);
             this.write(macAddress, serviceUUID, characteristicUUID, val);
             return true;
-        } else if (action.equals(SETTINGS)) {//跳转到蓝牙设置界面
+        } else if (action.equals(READ)) {//发送信息到指定mac
+            readCallbackcontext = callbackContext;
+            String macAddress = args.getString(0);
+            UUID serviceUUID = uuidFromString(args.getString(1));
+            UUID characteristicUUID = uuidFromString(args.getString(2));
+            this.read(macAddress, serviceUUID, characteristicUUID);
+            return true;
+        } else if (action.equals(SETTINGS)) {
             Intent intent = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
             cordova.getActivity().startActivity(intent);
             callbackContext.success();
-            return true;
-        } else if (action.equals(ENABLE)) {//主动开启蓝牙
-            enableBluetoothCallback = callbackContext;
-            Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            cordova.startActivityForResult(this, intent, REQUEST_ENABLE_BLUETOOTH);
-            return true;
         }
         return false;
     }
@@ -494,9 +521,6 @@ public class HeytzBle extends CordovaPlugin {
     private void stopNotification(String macAddress, UUID serviceUUID, UUID characteristicUUID, CallbackContext callbackContext) {
         rawDataAvailableCallback = null;
         _callbackcontext = callbackContext;
-//        BleGattService bleGattService = mBle.getService(macAddress, serviceUUID);
-//        if (bleGattService != null) {
-//               notifyCharacteristic = bleGattService.getCharacteristic(characteristicUUID);
         if (notifyCharacteristic != null) {
             if (mBle.requestStopNotification(macAddress, notifyCharacteristic)) {
 //                _callbackcontext.success();
@@ -522,6 +546,25 @@ public class HeytzBle extends CordovaPlugin {
             }
         } catch (Exception e) {
             _callbackcontext.error("write is error!" + e.getMessage());
+        }
+    }
+
+    /**
+     * 读取消息
+     *
+     * @param macAddress
+     * @param serviceUUID
+     * @param characteristicUUID
+     */
+    private void read(String macAddress, UUID serviceUUID, UUID characteristicUUID) {
+        try {
+            readCharacteristic = mBle.getService(macAddress, serviceUUID).getCharacteristic(characteristicUUID);
+            if (mBle.requestReadCharacteristic(macAddress, readCharacteristic)) {
+            } else {
+                readCallbackcontext.error("read is error!");
+            }
+        } catch (Exception e) {
+            readCallbackcontext.error("read is error!" + e.getMessage());
         }
     }
 
@@ -580,27 +623,6 @@ public class HeytzBle extends CordovaPlugin {
 
         }
 
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == REQUEST_ENABLE_BLUETOOTH) {
-
-            if (resultCode == Activity.RESULT_OK) {
-                LOG.d(TAG, "User enabled Bluetooth");
-                if (enableBluetoothCallback != null) {
-                    enableBluetoothCallback.success();
-                }
-            } else {
-                LOG.d(TAG, "User did *NOT* enable Bluetooth");
-                if (enableBluetoothCallback != null) {
-                    enableBluetoothCallback.error("User did not enable Bluetooth");
-                }
-            }
-
-            enableBluetoothCallback = null;
-        }
     }
 
     /**

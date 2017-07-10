@@ -52,7 +52,7 @@ ios
 android
     {
         "name": "TI SensorTag",
-        "id": "BD922605-1B07-4D55-8D09-B66653E51BBA"
+        "id": "B6:66:53:E5:1B:BA"
     }
 Advertising information format varies depending on your platform. See [Advertising Data](#advertising-data) for more information.
 

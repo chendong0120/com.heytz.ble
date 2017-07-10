@@ -27,7 +27,7 @@
 - [HeytzBle.isEnabled](#isenabled)
 - [HeytzBle.startNotification](#startNotification)
 - [HeytzBle.stopNotification](#stopNotification)
-- [HeytzBle.isConnected](#isconnected)(IOS)
+- [HeytzBle.isConnected](#isconnected)
 - [HeytzBle.read](#read)(IOS)
 - [HeytzBle.writeWithoutResponse](#writewithoutresponse)(IOS)
 - [HeytzBle.showBluetoothSettings](#showbluetoothsettings)(IOS)
@@ -272,6 +272,34 @@ Function `stopNotification` stops a previously registered notification callback.
 - __success__: Success callback function that is invoked when the notification is removed. [optional]
 - __failure__: Error callback function, invoked when error occurs. [optional]
 
+
+## isConnected
+
+Reports the connection status.
+
+    HeytzBle.isConnected(device_id, success, failure);
+
+### Description
+
+Function `isConnected` calls the success callback when the peripheral is connected and the failure callback when *not* connected.
+
+### Parameters
+
+- __device_id__: UUID or MAC address of the peripheral
+- __success__: Success callback function that is invoked with a boolean for connected status.
+- __failure__: Error callback function, invoked when error occurs. [optional]
+
+### Quick Example
+
+    ble.isConnected(
+        'FFCA0B09-CB1D-4DC0-A1EF-31AFD3EDFB53',
+        function() {
+            console.log("Peripheral is connected");
+        },
+        function() {
+            console.log("Peripheral is *not* connected");
+        }
+    );
 
 ## isEnabled
 

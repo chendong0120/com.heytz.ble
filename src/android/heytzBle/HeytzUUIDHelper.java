@@ -25,8 +25,12 @@ public class HeytzUUIDHelper {
 
     // handle 16 and 128 bit UUIDs
     public static UUID uuidFromString(String uuid) {
-
+        //剔除前面的 0x
+        if (uuid.length() > 4 && "0x".equals(uuid.substring(0, 2))) {
+            uuid = uuid.substring(2);
+        }
         if (uuid.length() == 4) {
+
             uuid = UUID_BASE.replace("XXXX", uuid.toLowerCase());
         }
         return UUID.fromString(uuid);

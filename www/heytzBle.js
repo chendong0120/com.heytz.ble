@@ -49,7 +49,6 @@ module.exports = {
     } else if (value instanceof Uint32Array) {
       value = value.buffer;
     }
-
     exec(success, error, 'HeytzBle', 'write', [device_id, serverUUID, characteristicUUID, value]);
   },
 
@@ -60,23 +59,11 @@ module.exports = {
   },
   // characteristic value comes back as ArrayBuffer in the success callback
   read: function (device_id, service_uuid, characteristic_uuid, success, failure) {
-    cordova.exec(success, failure, 'HeytzBle', 'read', [device_id, service_uuid, characteristic_uuid]);
+    exec(success, failure, 'HeytzBle', 'read', [device_id, service_uuid, characteristic_uuid]);
   },
   // value must be an ArrayBuffer
   writeWithoutResponse: function (device_id, service_uuid, characteristic_uuid, value, success, failure) {
     exec(success, failure, 'HeytzBle', 'writeWithoutResponse', [device_id, service_uuid, characteristic_uuid, value]);
-  },
-
-  // value must be an ArrayBuffer
-  writeCommand: function (device_id, service_uuid, characteristic_uuid, value, success, failure) {
-    console.log("WARNING: writeCommand is deprecated, use writeWithoutResponse");
-    exec(success, failure, 'HeytzBle', 'writeWithoutResponse', [device_id, service_uuid, characteristic_uuid, value]);
-  },
-
-  // success callback is called on notification
-  notify: function (device_id, service_uuid, characteristic_uuid, success, failure) {
-    console.log("WARNING: notify is deprecated, use startNotification");
-    exec(success, failure, 'HeytzBle', 'startNotification', [device_id, service_uuid, characteristic_uuid]);
   },
   isConnected: function (device_id, success, failure) {
     exec(success, failure, 'HeytzBle', 'isConnected', [device_id]);
@@ -84,9 +71,8 @@ module.exports = {
   enable: function (success, failure) {
     exec(success, failure, "HeytzBle", "enable", []);
   },
-
   showBluetoothSettings: function (success, failure) {
-    exec(success, failure, "BLE", "showBluetoothSettings", []);
+    exec(success, failure, "HeytzBle", "showBluetoothSettings", []);
   }
 };
 

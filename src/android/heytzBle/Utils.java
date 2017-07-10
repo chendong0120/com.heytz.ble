@@ -1,12 +1,25 @@
 package com.heytz.ble;
 
+import android.bluetooth.BluetoothDevice;
+import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import static com.heytz.ble.HeytzUUIDHelper.uuidFromString;
 
 /**
  * Created by chendongdong on 16/1/18.
  */
 public class Utils {
+    static final String TAG = "======heytzBle Utils======\n";
     public static Map<String, String> BLE_SERVICES = new HashMap<String, String>();
     public static Map<String, String> BLE_CHARACTERISTICS = new HashMap<String, String>();
 
@@ -119,7 +132,8 @@ public class Utils {
 
     private static Utils INSTANCE;
 
-    private Utils() {}
+    private Utils() {
+    }
 
     public static Utils getInstance() {
         if (INSTANCE == null) {
@@ -127,4 +141,43 @@ public class Utils {
         }
         return INSTANCE;
     }
+
+    /**
+     * 将device 转换为json对象
+     *
+     * @param device
+     * @return
+     */
+     static JSONObject deviceToJSONObject(BluetoothDevice device) {
+        JSONObject json = new JSONObject();
+
+        try {
+            json.put("id", device.getAddress()); // mac address
+            json.put("name", device.getName());
+            json.put("getUuids", device.getUuids());
+//            json.put("address", device.getAddress()); // mac address
+//            json.put("getBluetoothClass", device.getBluetoothClass());
+//            json.put("getBondState", device.getBondState());
+//            json.put("getType", device.getType());
+//            json.put("getClass", device.getClass());
+//            json.put("describeContents", device.describeContents());
+        } catch (JSONException e) { // this shouldn't happen
+            Log.w(TAG, e.getMessage());
+        } finally {
+            Log.w(TAG, json.toString());
+            return json;
+        }
+    }
+
+    static UUID[] parseServiceUUIDList(JSONArray jsonArray) throws JSONException {
+        List<UUID> serviceUUIDs = new ArrayList<UUID>();
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            String uuidString = jsonArray.getString(i);
+            serviceUUIDs.add(uuidFromString(uuidString));
+        }
+
+        return serviceUUIDs.toArray(new UUID[jsonArray.length()]);
+    }
+
 }

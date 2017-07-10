@@ -51,8 +51,13 @@ module.exports = {
     }
     exec(success, error, 'HeytzBle', 'write', [device_id, serverUUID, characteristicUUID, value]);
   },
-
-//************************only ios***********************************
+  isConnected: function (device_id, success, failure) {
+    exec(success, failure, 'HeytzBle', 'isConnected', [device_id]);
+  },
+  showBluetoothSettings: function (success, failure) {
+    exec(success, failure, "HeytzBle", "showBluetoothSettings", []);
+  },
+  //************************only ios***********************************
   // this will probably be removed
   list: function (success, failure) {
     exec(success, failure, 'HeytzBle', 'list', []);
@@ -65,14 +70,9 @@ module.exports = {
   writeWithoutResponse: function (device_id, service_uuid, characteristic_uuid, value, success, failure) {
     exec(success, failure, 'HeytzBle', 'writeWithoutResponse', [device_id, service_uuid, characteristic_uuid, value]);
   },
-  isConnected: function (device_id, success, failure) {
-    exec(success, failure, 'HeytzBle', 'isConnected', [device_id]);
-  },
+  //************************Only Android***********************************
   enable: function (success, failure) {
     exec(success, failure, "HeytzBle", "enable", []);
-  },
-  showBluetoothSettings: function (success, failure) {
-    exec(success, failure, "HeytzBle", "showBluetoothSettings", []);
   }
 };
 

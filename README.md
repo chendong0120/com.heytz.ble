@@ -30,8 +30,8 @@
 - [HeytzBle.isConnected](#isconnected)
 - [HeytzBle.read](#read)(IOS)
 - [HeytzBle.writeWithoutResponse](#writewithoutresponse)(IOS)
-- [HeytzBle.showBluetoothSettings](#showbluetoothsettings)(IOS)
-- [HeytzBle.enable](#enable)(IOS)
+- [HeytzBle.showBluetoothSettings](#showbluetoothsettings)
+- [HeytzBle.enable](#enable)(Android)
 
 ## scan
 Scan and discover BLE peripherals.
@@ -291,7 +291,7 @@ Function `isConnected` calls the success callback when the peripheral is connect
 
 ### Quick Example
 
-    ble.isConnected(
+    HeytzBle.isConnected(
         'FFCA0B09-CB1D-4DC0-A1EF-31AFD3EDFB53',
         function() {
             console.log("Peripheral is connected");
@@ -301,29 +301,56 @@ Function `isConnected` calls the success callback when the peripheral is connect
         }
     );
 
-## isEnabled
 
-Reports if bluetooth is enabled.
+## showBluetoothSettings
 
-    HeytzBle.isEnabled(success, failure);
+Show the Bluetooth settings on the device.
+
+    HeytzBle.showBluetoothSettings(success, failure);
 
 ### Description
 
-Function `isEnabled` calls the success callback when Bluetooth is enabled and the failure callback when Bluetooth is *not* enabled.
+Function `showBluetoothSettings` opens the Bluetooth settings for the operating systems.
+
+
+
+
+## enable
+
+Enable Bluetooth on the device.
+
+    HeytzBle.enable(success, failure);
+
+### Description
+
+Function `enable` prompts the user to enable Bluetooth.
+
+#### Android
+
+`enable` is only supported on Android and does not work on iOS.
+
+If `enable` is called when Bluetooth is already enabled, the user will not prompted and the success callback will be invoked.
 
 ### Parameters
 
-- __success__: Success callback function that is invoked with a boolean for connected status.
-- __failure__: Error callback function, invoked when error occurs. [optional]
+- __success__: Success callback function, invoked if the user enabled Bluetooth.
+- __failure__: Error callback function, invoked if the user does not enabled Bluetooth.
 
 ### Quick Example
 
-    HeytzBle.isEnabled(
+    HeytzBle.enable(
         function() {
             console.log("Bluetooth is enabled");
         },
         function() {
-            console.log("Bluetooth is *not* enabled");
+            console.log("The user did *not* enable Bluetooth");
         }
     );
 
+# Other Bluetooth Plugins
+
+ * [BluetoothSerial](https://github.com/don/BluetoothSerial) - Connect to Arduino and other devices. Bluetooth Classic on Android, BLE on iOS.
+ * [RFduino](https://github.com/don/cordova-plugin-rfduino) - RFduino specific plugin for iOS and Android.
+ * [BluetoothLE](https://github.com/randdusing/BluetoothLE) - Rand Dusing's BLE plugin for Cordova
+ * [PhoneGap Bluetooth Plugin](https://github.com/tanelih/phonegap-bluetooth-plugin) - Bluetooth classic pairing and connecting for Android
+ * [cordova-plugin-ble-central](https://github.com/don/cordova-plugin-ble-central) -

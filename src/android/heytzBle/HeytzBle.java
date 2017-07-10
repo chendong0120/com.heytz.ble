@@ -1,6 +1,8 @@
 package com.heytz.ble;
 
 import android.Manifest;
+import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -48,6 +50,7 @@ public class HeytzBle extends CordovaPlugin {
     private static final String STOPNOTIFICATION = "stopNotification";   // unregister for characteristic notification
     private static final String WRITE = "write";
     private static final String SETTINGS = "showBluetoothSettings";
+    private static final String ENABLE = "enable";
 
     private static final long SCAN_PERIOD = 10000;
     private static final String TAG = "\n=======HeytzBle========";
@@ -65,10 +68,16 @@ public class HeytzBle extends CordovaPlugin {
     private String currentDeviceAddress;            //当前监听的设备
 
     private boolean mNotifyStarted;
+
+    private CallbackContext enableBluetoothCallback;
+    private static final int REQUEST_ENABLE_BLUETOOTH = 1;
+
     private CallbackContext _callbackcontext;
     private CallbackContext scancallbackcontext;
     private CallbackContext connectCallbackcontext;
     private CallbackContext rawDataAvailableCallback;
+
+
     // Android 23 requires new permissions for mBLEServiceOperate.startScan()
     private static final String ACCESS_COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int REQUEST_ACCESS_COARSE_LOCATION = 2;
@@ -375,10 +384,16 @@ public class HeytzBle extends CordovaPlugin {
             byte[] val = args.getArrayBuffer(3);
             this.write(macAddress, serviceUUID, characteristicUUID, val);
             return true;
-        } else if (action.equals(SETTINGS)) {
+        } else if (action.equals(SETTINGS)) {//跳转到蓝牙设置界面
             Intent intent = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
             cordova.getActivity().startActivity(intent);
             callbackContext.success();
+            return true;
+        } else if (action.equals(ENABLE)) {//主动开启蓝牙
+            enableBluetoothCallback = callbackContext;
+            Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            cordova.startActivityForResult(this, intent, REQUEST_ENABLE_BLUETOOTH);
+            return true;
         }
         return false;
     }
@@ -565,6 +580,27 @@ public class HeytzBle extends CordovaPlugin {
 
         }
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == REQUEST_ENABLE_BLUETOOTH) {
+
+            if (resultCode == Activity.RESULT_OK) {
+                LOG.d(TAG, "User enabled Bluetooth");
+                if (enableBluetoothCallback != null) {
+                    enableBluetoothCallback.success();
+                }
+            } else {
+                LOG.d(TAG, "User did *NOT* enable Bluetooth");
+                if (enableBluetoothCallback != null) {
+                    enableBluetoothCallback.error("User did not enable Bluetooth");
+                }
+            }
+
+            enableBluetoothCallback = null;
+        }
     }
 
     /**

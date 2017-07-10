@@ -1,13 +1,5 @@
 # com.heytz.ble
 黑子信息科技ble控制
-#
-###ANDROID
-    put AndroidManifest.xml application
-
-    android:name 为:com.heytz.ble.BleApplication
-
-    Example:
-         android:name="com.heytz.ble.BleApplication"
 
 ###IOS
 
@@ -15,6 +7,12 @@
     
     使用 cordova plugin add com.heytz.ble  --variable BLUETOOTH_USAGE_DESCRIPTION="you usage message" 
     
+# 更新日志
+   
+    17.07.10 
+
+        1.取消Android需要配置AndroidManifest.xml application
+
 
 # API
 

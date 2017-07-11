@@ -32,6 +32,7 @@
 - [HeytzBle.writeWithoutResponse](#writewithoutresponse)(IOS)
 - [HeytzBle.showBluetoothSettings](#showbluetoothsettings)
 - [HeytzBle.enable](#enable)(Android)
+- [HeytzBle.autoConnect](#autoConnect)
 
 ## scan
 Scan and discover BLE peripherals.
@@ -368,6 +369,28 @@ If `enable` is called when Bluetooth is already enabled, the user will not promp
             console.log("The user did *not* enable Bluetooth");
         }
     );
+
+## autoConnect
+
+自动连接
+
+    HeytzBle.autoConnect(name,seconds,success,failure);
+    
+### Description
+
+
+### Parameters
+
+- __name__:     设备名称 
+- __seconds__:  超时时间 单位：秒
+- __success__:  成功的返回，返回这个设备的对象
+- __failure__:  错误的返回，{type:"",message:""} 
+                type : enable/scan/connect/      
+                 {type:"enable",message:"don't enable blueTooth"}
+                 {type:"scan",message:"time out"}
+                 {type:"connect",message:"connect error"}
+                 
+
 
 # Other Bluetooth Plugins
 

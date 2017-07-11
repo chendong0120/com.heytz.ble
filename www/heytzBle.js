@@ -57,6 +57,9 @@ module.exports = {
   showBluetoothSettings: function (success, failure) {
     exec(success, failure, "HeytzBle", "showBluetoothSettings", []);
   },
+  autoConnect: function (name, seconds, success, failure) {
+    exec(success, failure, "HeytzBle", "autoConnect", [name, seconds]);
+  },
   //************************only ios***********************************
   // this will probably be removed
   list: function (success, failure) {
@@ -73,7 +76,7 @@ module.exports = {
   //************************Only Android***********************************
   enable: function (success, failure) {
     exec(success, failure, "HeytzBle", "enable", []);
-  }
+  },
 };
 
 function onDeviceReady() {

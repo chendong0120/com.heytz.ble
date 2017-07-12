@@ -88,7 +88,9 @@
 - (void)autoConnect:(CDVInvokedUrlCommand *)command {
 
     NSLog(@"autoConnect");
-
+    int bluetoothState = [manager state];
+    BOOL enabled = bluetoothState == CBCentralManagerStatePoweredOn;
+    if (enabled) {
     autoConnectPeripheral = nil;
     autoConnectCallbackId = [command.callbackId copy];
     autoConnectDeviceName = [command.arguments objectAtIndex:0];
@@ -99,7 +101,10 @@
                                    selector:@selector(stopScanTimer:)
                                    userInfo:[command.callbackId copy]
                                     repeats:NO];
-
+    } else {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:@{@"type": @"enable", @"message": @"don't enable blueTooth"}];
+         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
 }
 
 // read: function (device_id, service_uuid, characteristic_uuid, success, failure) {

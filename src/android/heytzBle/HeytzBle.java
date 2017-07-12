@@ -397,11 +397,19 @@ public class HeytzBle extends CordovaPlugin {
             this.connect(macAddress, callbackContext);
             return true;
         } else if (action.equals(AUTO_CONNECT)) {//连接设备
-            autoConnectCallbackcontext = callbackContext;
-            String name = args.getString(0);
-            autoConnectName = name;
-            int seconds = args.getInt(1);
-            scanLeDevice(true, null, seconds);
+            if (mBle.adapterEnabled()) {
+                autoConnectCallbackcontext = callbackContext;
+                String name = args.getString(0);
+                autoConnectName = name;
+                int seconds = args.getInt(1);
+                scanLeDevice(true, null, seconds);
+            } else {
+                JSONObject autojsonObject = new JSONObject();
+                autojsonObject.put("type", "enable");
+                autojsonObject.put("message", "don't enable blueTooth");
+                PluginResult autoResult = new PluginResult(PluginResult.Status.ERROR, autojsonObject);
+                callbackContext.sendPluginResult(autoResult);
+            }
             return true;
         } else if (action.equals(DISCONNECT)) {//断开连接
             String macAddress = args.getString(0);

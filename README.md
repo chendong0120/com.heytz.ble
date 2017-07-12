@@ -9,6 +9,8 @@
     
 # 更新日志
    
+    17.07.12
+        1. 加入 autoConnect 接口
     17.07.10 
 
         1.取消Android需要配置AndroidManifest.xml application

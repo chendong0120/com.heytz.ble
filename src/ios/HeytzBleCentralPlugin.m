@@ -323,7 +323,7 @@
         discoverPeripherialCallbackId = nil;
     }
     if (autoConnectCallbackId) {
-        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"type": @"scan", @"message": @"time out"}];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:@{@"type": @"scan", @"message": @"time out"}];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:autoConnectCallbackId];
         autoConnectCallbackId = nil;
         NSLog(@"autoConnect, time out");

@@ -96,7 +96,7 @@
     autoConnectDeviceName = [command.arguments objectAtIndex:0];
     NSNumber *timeoutSeconds = [command.arguments objectAtIndex:1];
     [manager scanForPeripheralsWithServices:nil options:nil];
-    [NSTimer scheduledTimerWithTimeInterval:[timeoutSeconds floatValue]
+  scenTimer=   [NSTimer scheduledTimerWithTimeInterval:[timeoutSeconds floatValue]
                                      target:self
                                    selector:@selector(stopScanTimer:)
                                    userInfo:[command.callbackId copy]
@@ -251,7 +251,7 @@
 
     [manager scanForPeripheralsWithServices:serviceUUIDs options:nil];
 
-    [NSTimer scheduledTimerWithTimeInterval:[timeoutSeconds floatValue]
+   [NSTimer scheduledTimerWithTimeInterval:[timeoutSeconds floatValue]
                                      target:self
                                    selector:@selector(stopScanTimer:)
                                    userInfo:[command.callbackId copy]
@@ -330,7 +330,6 @@
     if (autoConnectCallbackId) {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:@{@"type": @"scan", @"message": @"time out"}];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:autoConnectCallbackId];
-        autoConnectCallbackId = nil;
         NSLog(@"autoConnect, time out");
     }
 }
@@ -405,8 +404,8 @@
         [self.commandDelegate sendPluginResult:pluginResult callbackId:connectCallbackId];
     }
     if (autoConnectPeripheral && autoConnectCallbackId && [[autoConnectPeripheral uuidAsString] isEqualToString:[peripheral uuidAsString]]) {
-        CDVPluginResult *pluginResult = nil;
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:@{@"type": @"connect", @"message": @"connect error"}];
+        autoConnectCallbackId=nil;
+        CDVPluginResult *pluginResult =  [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:@{@"type": @"connect", @"message": @"connect error"}];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:autoConnectCallbackId];
     }
 }
@@ -429,12 +428,14 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:connectCallbackId];
 
     if (autoConnectPeripheral && autoConnectCallbackId && [[autoConnectPeripheral uuidAsString] isEqualToString:[peripheral uuidAsString]]) {
-        CDVPluginResult *pluginResult = nil;
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:@{@"type": @"connect", @"message": @"connect error"}];
+        CDVPluginResult *pluginResult =  [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:@{@"type": @"connect", @"message": @"connect error"}];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:autoConnectCallbackId];
         autoConnectCallbackId = nil;
         autoConnectDeviceName = nil;
         autoConnectPeripheral = nil;
+        if([scenTimer isValid]){
+            [scenTimer invalidate];
+        }
     }
 }
 
@@ -497,6 +498,9 @@
         [autoClatch removeObject:service];
         if ([autoClatch count] == 0) {
             if (autoConnectCallbackId) {
+                if([scenTimer isValid]){
+                    [scenTimer invalidate];
+                }
                 CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[peripheral asDictionary]];
                 [pluginResult setKeepCallbackAsBool:TRUE];
                 [self.commandDelegate sendPluginResult:pluginResult callbackId:autoConnectCallbackId];

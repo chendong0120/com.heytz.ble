@@ -27,6 +27,8 @@
     NSMutableDictionary *stopNotificationCallbacks;
     NSMutableDictionary *connectCallbackLatches;
     NSMutableDictionary *autoConnectCallbackLatches;
+    NSTimer     *scenTimer;
+
 }
 
 @property(strong, nonatomic) NSMutableSet *peripherals;

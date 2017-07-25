@@ -50,6 +50,7 @@ public class HeytzBle extends CordovaPlugin {
     private static final String STARTNOTIFICATION = "startNotification"; // register for characteristic notification
     private static final String STOPNOTIFICATION = "stopNotification";   // unregister for characteristic notification
     private static final String WRITE = "write";
+    private static final String Write_without_response = "writeWithoutResponse";
     private static final String READ = "read";
     private static final String SETTINGS = "showBluetoothSettings";
 
@@ -441,7 +442,17 @@ public class HeytzBle extends CordovaPlugin {
             UUID serviceUUID = uuidFromString(args.getString(1));
             UUID characteristicUUID = uuidFromString(args.getString(2));
             byte[] val = args.getArrayBuffer(3);
-            this.write(macAddress, serviceUUID, characteristicUUID, val);
+            int type = BleGattCharacteristic.WRITE_TYPE_DEFAULT;
+            this.write(macAddress, serviceUUID, characteristicUUID, val,type);
+            return true;
+        } else if (action.equals(Write_without_response)) {//发送信息到指定mac
+            _callbackcontext = callbackContext;
+            String macAddress = args.getString(0);
+            UUID serviceUUID = uuidFromString(args.getString(1));
+            UUID characteristicUUID = uuidFromString(args.getString(2));
+            byte[] val = args.getArrayBuffer(3);
+            int type = BleGattCharacteristic.WRITE_TYPE_NO_RESPONSE;
+            this.write(macAddress, serviceUUID, characteristicUUID, val,type);
             return true;
         } else if (action.equals(READ)) {//发送信息到指定mac
             readCallbackcontext = callbackContext;
@@ -570,7 +581,24 @@ public class HeytzBle extends CordovaPlugin {
     /**
      * 写入消息
      */
-    private void write(String macAddress, UUID serviceUUID, UUID characteristicUUID, byte[] val) {
+    private void write(String macAddress, UUID serviceUUID, UUID characteristicUUID, byte[] val, int writeType) {
+        try {
+            writeCharacteristic = mBle.getService(macAddress, serviceUUID).getCharacteristic(characteristicUUID);
+            //byte[] data = Hex.decodeHex(val.toCharArray());
+            writeCharacteristic.setValue(val);
+            writeCharacteristic.setWriteType(writeType);
+            if (mBle.requestWriteCharacteristic(currentDeviceAddress,
+                    writeCharacteristic, "")) {
+                // _callbackcontext.success();
+            } else {
+                _callbackcontext.error("write is error!");
+            }
+        } catch (Exception e) {
+            _callbackcontext.error("write is error!" + e.getMessage());
+        }
+    }
+
+    private void writeResponse(String macAddress, UUID serviceUUID, UUID characteristicUUID, byte[] val) {
         try {
             writeCharacteristic = mBle.getService(macAddress, serviceUUID).getCharacteristic(characteristicUUID);
             //byte[] data = Hex.decodeHex(val.toCharArray());

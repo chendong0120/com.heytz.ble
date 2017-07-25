@@ -51,6 +51,14 @@ module.exports = {
     }
     exec(success, error, 'HeytzBle', 'write', [device_id, serverUUID, characteristicUUID, value]);
   },
+  // value must be an ArrayBuffer
+  writeWithoutResponse: function (device_id, service_uuid, characteristic_uuid, value, success, failure) {
+    exec(success, failure, 'HeytzBle', 'writeWithoutResponse', [device_id, service_uuid, characteristic_uuid, value]);
+  },
+  // characteristic value comes back as ArrayBuffer in the success callback
+  read: function (device_id, service_uuid, characteristic_uuid, success, failure) {
+    exec(success, failure, 'HeytzBle', 'read', [device_id, service_uuid, characteristic_uuid]);
+  },
   isConnected: function (device_id, success, failure) {
     exec(success, failure, 'HeytzBle', 'isConnected', [device_id]);
   },
@@ -60,18 +68,11 @@ module.exports = {
   autoConnect: function (name, seconds, success, failure) {
     exec(success, failure, "HeytzBle", "autoConnect", [name, seconds]);
   },
+
   //************************only ios***********************************
   // this will probably be removed
   list: function (success, failure) {
     exec(success, failure, 'HeytzBle', 'list', []);
-  },
-  // characteristic value comes back as ArrayBuffer in the success callback
-  read: function (device_id, service_uuid, characteristic_uuid, success, failure) {
-    exec(success, failure, 'HeytzBle', 'read', [device_id, service_uuid, characteristic_uuid]);
-  },
-  // value must be an ArrayBuffer
-  writeWithoutResponse: function (device_id, service_uuid, characteristic_uuid, value, success, failure) {
-    exec(success, failure, 'HeytzBle', 'writeWithoutResponse', [device_id, service_uuid, characteristic_uuid, value]);
   },
   //************************Only Android***********************************
   enable: function (success, failure) {

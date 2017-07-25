@@ -31,7 +31,7 @@
 - [HeytzBle.stopNotification](#stopNotification)
 - [HeytzBle.isConnected](#isconnected)
 - [HeytzBle.read](#read)
-- [HeytzBle.writeWithoutResponse](#writewithoutresponse)(IOS)
+- [HeytzBle.writeWithoutResponse](#writewithoutresponse)
 - [HeytzBle.showBluetoothSettings](#showbluetoothsettings)
 - [HeytzBle.enable](#enable)(Android)
 - [HeytzBle.autoConnect](#autoConnect)

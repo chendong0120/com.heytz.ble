@@ -5,6 +5,7 @@ package com.heytz.ble.sdk;
  */
 
 import android.annotation.SuppressLint;
+
 import com.heytz.ble.sdk.BleService.BLESDK;
 
 import java.util.UUID;
@@ -16,6 +17,22 @@ public class BleGattCharacteristic {
     public static final int PROPERTY_WRITE = 8;
     public static final int PROPERTY_NOTIFY = 16;
     public static final int PROPERTY_INDICATE = 32;
+
+
+    /**
+     * Write characteristic, requesting acknoledgement by the remote device
+     */
+    public static final int WRITE_TYPE_DEFAULT = 0x02;
+
+    /**
+     * Wrtite characteristic without requiring a response by the remote device
+     */
+    public static final int WRITE_TYPE_NO_RESPONSE = 0x01;
+
+    /**
+     * Write characteristic including authentication signature
+     */
+    public static final int WRITE_TYPE_SIGNED = 0x04;
 
     /**
      * Characteristic value format type uint8
@@ -62,6 +79,7 @@ public class BleGattCharacteristic {
      * Characteristic value format type float (32-bit float)
      */
     public static final int FORMAT_FLOAT = 0x34;
+
 
     private android.bluetooth.BluetoothGattCharacteristic mGattCharacteristicA;
     private com.broadcom.bt.gatt.BluetoothGattCharacteristic mGattCharacteristicB;
@@ -134,6 +152,16 @@ public class BleGattCharacteristic {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setWriteType(int writeType) {
+        if (mBleSDK == BLESDK.ANDROID) {
+            getGattCharacteristicA().setWriteType(writeType);
+        } else if (mBleSDK == BLESDK.SAMSUNG) {
+            mGattCharacteristicS.setWriteType(writeType);
+        } else if (mBleSDK == BLESDK.BROADCOM) {
+            mGattCharacteristicB.setWriteType(writeType);
+        }
     }
 
     public boolean setValue(byte[] val) {

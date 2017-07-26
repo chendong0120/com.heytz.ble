@@ -166,9 +166,9 @@
         if (message != nil) {
             CBPeripheral *peripheral = [context peripheral];
             CBCharacteristic *characteristic = [context characteristic];
-
+            NSData *data = [NSData dataWithBytes:&message length:sizeof(message)];
             // TODO need to check the max length
-            [peripheral writeValue:message forCharacteristic:characteristic type:CBCharacteristicWriteWithoutResponse];
+            [peripheral writeValue:data forCharacteristic:characteristic type:CBCharacteristicWriteWithoutResponse];
 
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         } else {

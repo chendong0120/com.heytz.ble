@@ -443,7 +443,7 @@ public class HeytzBle extends CordovaPlugin {
             UUID characteristicUUID = uuidFromString(args.getString(2));
             byte[] val = args.getArrayBuffer(3);
             int type = BleGattCharacteristic.WRITE_TYPE_DEFAULT;
-            this.write(macAddress, serviceUUID, characteristicUUID, val,type);
+            this.write(macAddress, serviceUUID, characteristicUUID, val, type);
             return true;
         } else if (action.equals(Write_without_response)) {//发送信息到指定mac
             _callbackcontext = callbackContext;
@@ -452,7 +452,7 @@ public class HeytzBle extends CordovaPlugin {
             UUID characteristicUUID = uuidFromString(args.getString(2));
             byte[] val = args.getArrayBuffer(3);
             int type = BleGattCharacteristic.WRITE_TYPE_NO_RESPONSE;
-            this.write(macAddress, serviceUUID, characteristicUUID, val,type);
+            this.write(macAddress, serviceUUID, characteristicUUID, val, type);
             return true;
         } else if (action.equals(READ)) {//发送信息到指定mac
             readCallbackcontext = callbackContext;
@@ -493,14 +493,15 @@ public class HeytzBle extends CordovaPlugin {
                 public void run() {
                     if (mBle != null) {
                         mBle.stopScan();
-                        JSONObject jsonObject = new JSONObject();
-                        try {
-                            jsonObject.put("type", "scan");
-                            jsonObject.put("message", "time out");
-                        } catch (JSONException e) {
-                        } finally {
-                            PluginResult result = new PluginResult(PluginResult.Status.ERROR, jsonObject);
-                            autoConnectCallbackcontext.sendPluginResult(result);
+                        if (autoConnectCallbackcontext != null) {
+                            try {
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("type", "scan");
+                                jsonObject.put("message", "time out");
+                                PluginResult result = new PluginResult(PluginResult.Status.ERROR, jsonObject);
+                                autoConnectCallbackcontext.sendPluginResult(result);
+                            } catch (JSONException e) {
+                            }
                         }
                     }
                 }

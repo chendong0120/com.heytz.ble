@@ -143,7 +143,7 @@ public class Utils {
     }
 
     /**
-     * 将device 转换为json对象
+     * ?device ???json??
      *
      * @param device
      * @return

@@ -147,16 +147,17 @@ public class HeytzBle extends CordovaPlugin {
 
             if (BleService.BLE_CHARACTERISTIC_WRITE.equals(action)) {//写入消息成功.
                 LOG.w(TAG, "Write success!");
-                JSONObject jsonObject = new JSONObject();
                 try {
+                    JSONObject jsonObject = new JSONObject();
                     jsonObject.put("state", "WriteSuccess");
+                    if (_callbackcontext != null) {
+                        PluginResult result = new PluginResult(PluginResult.Status.OK, jsonObject);
+                        _callbackcontext.sendPluginResult(result);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if (_callbackcontext != null) {
-                    PluginResult result = new PluginResult(PluginResult.Status.OK, jsonObject);
-                    _callbackcontext.sendPluginResult(result);
-                }
+
             }
         }
 
@@ -242,6 +243,29 @@ public class HeytzBle extends CordovaPlugin {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            } else if (BleService.BLE_REQUEST_FAILED.equals(action)) {
+                //发送失败，并且  BLE_STATUS_ABNORMAL状态报警 并且 设备断开
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("state", "WriteError");
+                    if (_callbackcontext != null) {
+                        PluginResult result = new PluginResult(PluginResult.Status.ERROR, jsonObject);
+                        _callbackcontext.sendPluginResult(result);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    LOG.w(TAG, "Device disconnected...");
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("state", "disconnected");
+                    PluginResult result = new PluginResult(PluginResult.Status.ERROR, jsonObject);
+                    if (connectCallbackcontext != null) {
+                        connectCallbackcontext.sendPluginResult(result);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -260,7 +284,7 @@ public class HeytzBle extends CordovaPlugin {
             }
 
             String uuid = extras.getString(BleService.EXTRA_UUID);
-            if (uuid != null
+            if (uuid != null && notifyCharacteristic != null
                     && !notifyCharacteristic.getUuid().toString().equals(uuid)) {
                 return;
             }

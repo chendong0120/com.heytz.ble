@@ -6,7 +6,20 @@ var stringToArrayBuffer = function (str) {
   }
   return ret.buffer;
 };
-
+var messageToArrayBuffer = function (value) {
+  // convert to ArrayBuffer
+  if (typeof value === 'string') {
+    value = stringToArrayBuffer(value);
+  } else if (value instanceof Array) {
+    // assuming array of interger
+    value = new Uint8Array(value).buffer;
+  } else if (value instanceof Uint8Array) {
+    value = value.buffer;
+  } else if (value instanceof Uint32Array) {
+    value = value.buffer;
+  }
+  return value;
+};
 module.exports = {
   init: function (success, error) {
     exec(success, error, "HeytzBle", "init", []);
@@ -38,21 +51,12 @@ module.exports = {
     exec(success, error, 'HeytzBle', 'stopNotification', [device_id, serverUUID, characteristicUUID]);
   },
   write: function (device_id, serverUUID, characteristicUUID, value, success, error) {
-    // convert to ArrayBuffer
-    if (typeof value === 'string') {
-      value = stringToArrayBuffer(value);
-    } else if (value instanceof Array) {
-      // assuming array of interger
-      value = new Uint8Array(value).buffer;
-    } else if (value instanceof Uint8Array) {
-      value = value.buffer;
-    } else if (value instanceof Uint32Array) {
-      value = value.buffer;
-    }
+    value = messageToArrayBuffer(value);
     exec(success, error, 'HeytzBle', 'write', [device_id, serverUUID, characteristicUUID, value]);
   },
   // value must be an ArrayBuffer
   writeWithoutResponse: function (device_id, service_uuid, characteristic_uuid, value, success, failure) {
+    value = messageToArrayBuffer(value);
     exec(success, failure, 'HeytzBle', 'writeWithoutResponse', [device_id, service_uuid, characteristic_uuid, value]);
   },
   // characteristic value comes back as ArrayBuffer in the success callback
@@ -87,4 +91,5 @@ function onDeviceReady() {
     });
   }
 }
+
 document.addEventListener("deviceready", onDeviceReady, false);
